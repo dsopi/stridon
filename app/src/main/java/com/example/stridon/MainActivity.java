@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
                 signIn();
             }
         });
-
         fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
@@ -51,10 +50,10 @@ public class MainActivity extends AppCompatActivity {
                 .requestId()
                 .addExtension(fitnessOptions)
                 .build();
+        // TODO possibly add google options to separate class
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // TODO if user is already signed in, take to main page (skip settings too)
     }
 
     @Override
@@ -66,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             Log.i("tag", "main activity account is null");
         } else {
             Log.i("tag", "main activity account for " + account.getEmail());
+            // TODO if user is already signed in, take to main page (skip settings too)
         }
 
     }
@@ -133,4 +133,5 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
+
 }

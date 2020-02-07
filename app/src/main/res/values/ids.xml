@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- settings ids-->
+    <item name="numberOfRuns" type="id" />
+    <item name="durationOfRuns" type="id" />
+    <item name="timeOfRuns" type="id" />
+
+    <item name="numberOfWalks" type="id" />
+    <item name="durationOfWalks" type="id" />
+    <item name="timeOfWalks" type="id" />
+
+</resources>
