@@ -25,9 +25,10 @@ import com.google.android.gms.tasks.Task;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Button signOutButton;
+    private Button signOutButton;
     private RadioGroup goesOnRuns;
     private RadioGroup goesOnWalks;
+    private Button finishButton;
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -39,6 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         signOutButton = findViewById(R.id.signout);
         goesOnRuns = findViewById(R.id.goesOnRuns);
         goesOnWalks = findViewById(R.id.goesOnWalks);
+        finishButton = findViewById(R.id.finish);
 
         // TODO this signout button is just here for testing, eventually it will be moved since signout doesnt need to be in settings page
         signOutButton.setOnClickListener(new View.OnClickListener() {
@@ -59,6 +61,13 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 goesOnWalksClicked(group, checkedId);
+            }
+        });
+
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHome();
             }
         });
 
@@ -246,5 +255,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (findViewById(R.id.timeOfWalks) != null) {
             ll.removeView(findViewById(R.id.timeOfWalks));
         }
+    }
+
+    private void goToHome(){
+        Intent homeIntent = new Intent(this, HomeActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(homeIntent);
     }
 }

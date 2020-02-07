@@ -119,5 +119,12 @@
         android:layout_gravity="center"
         android:text="Disconnect from Google Fit"></Button>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:id="@+id/finish"
+        android:text="finish">
+    </Button>
 
 </LinearLayout>
