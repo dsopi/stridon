@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
+import com.example.stridon.extras.MyGoogleOptions;
+import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.tasks.OnCompleteListener;

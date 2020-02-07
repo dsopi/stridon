@@ -1,4 +1,4 @@
-package com.example.stridon;
+package com.example.stridon.extras;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.fitness.FitnessOptions;

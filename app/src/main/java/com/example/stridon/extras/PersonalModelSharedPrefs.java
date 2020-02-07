@@ -1,4 +1,4 @@
-package com.example.stridon;
+package com.example.stridon.extras;
 
 import android.content.Context;
 import android.content.SharedPreferences;
