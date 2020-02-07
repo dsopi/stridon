@@ -16,7 +16,7 @@ public class PersonalModelSharedPrefs {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
 
-    public static PersonalModelSharedPrefs getSharedPreferences(Context context) {
+    public static PersonalModelSharedPrefs getInstance(Context context) {
         if (personalModelSharedPrefs == null) {
             // not sure if this is the best way to get context
             personalModelSharedPrefs = new PersonalModelSharedPrefs(context);
@@ -49,7 +49,7 @@ public class PersonalModelSharedPrefs {
         editor.putFloat(age, userAge).apply();
     }
 
-    public float getAgge() {
+    public float getAge() {
         return prefs.getFloat(age, -1);
     }
 
