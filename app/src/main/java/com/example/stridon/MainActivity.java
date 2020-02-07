@@ -40,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
-
     }
 
     @Override
