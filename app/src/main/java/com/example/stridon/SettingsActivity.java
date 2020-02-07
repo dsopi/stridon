@@ -39,6 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
         goesOnWalks = findViewById(R.id.goesOnWalks);
         finishButton = findViewById(R.id.finish);
 
+        /**
+         * TODO the values for each input should be pre-filled with previously entered values in
+         * {@link PersonalModelSharedPrefs}
+         */
+
         // TODO this signout button is just here for testing, eventually it will be moved since signout doesnt need to be in settings page
         signOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,8 +146,19 @@ public class SettingsActivity extends AppCompatActivity {
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             p.gravity = Gravity.CENTER_HORIZONTAL;
             et.setLayoutParams(p);
-            et.setHint("# duration of runs in minutes");
+            et.setHint("duration of runs in minutes");
             et.setId(R.id.durationOfRuns);
+            et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            ll.addView(et);
+        }
+
+        if (findViewById(R.id.distanceOfRuns) == null) {
+            EditText et = new EditText(this);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            p.gravity = Gravity.CENTER_HORIZONTAL;
+            et.setLayoutParams(p);
+            et.setHint("distance of runs in miles");
+            et.setId(R.id.distanceOfRuns);
             et.setInputType(InputType.TYPE_CLASS_NUMBER);
             ll.addView(et);
         }
@@ -168,6 +184,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (findViewById(R.id.durationOfRuns) != null) {
             ll.removeView(findViewById(R.id.durationOfRuns));
+        }
+
+        if (findViewById(R.id.distanceOfRuns) != null) {
+            ll.removeView(findViewById(R.id.distanceOfRuns));
         }
 
         if (findViewById(R.id.timeOfRuns) != null) {
@@ -211,8 +231,18 @@ public class SettingsActivity extends AppCompatActivity {
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             p.gravity = Gravity.CENTER_HORIZONTAL;
             et.setLayoutParams(p);
-            et.setHint("# duration of walks in minutes");
+            et.setHint("duration of walks in minutes");
             et.setId(R.id.durationOfWalks);
+            ll.addView(et);
+        }
+
+        if (findViewById(R.id.distanceOfWalks) == null) {
+            EditText et = new EditText(this);
+            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            p.gravity = Gravity.CENTER_HORIZONTAL;
+            et.setLayoutParams(p);
+            et.setHint("distance of walks in miles");
+            et.setId(R.id.distanceOfWalks);
             ll.addView(et);
         }
 
@@ -236,6 +266,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         if (findViewById(R.id.durationOfWalks) != null) {
             ll.removeView(findViewById(R.id.durationOfWalks));
+        }
+
+        if (findViewById(R.id.distanceOfWalks) != null) {
+            ll.removeView(findViewById(R.id.distanceOfWalks));
         }
 
         if (findViewById(R.id.timeOfWalks) != null) {

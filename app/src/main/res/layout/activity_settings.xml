@@ -1,130 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/settingsLayout"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="top|center"
-    android:orientation="vertical"
-    tools:context=".SettingsActivity">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/heightEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:hint="Height"></EditText>
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/settingsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="top|center"
+        android:orientation="vertical"
+        tools:context=".SettingsActivity">
 
-    <EditText
-        android:id="@+id/weightEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/heightEditText"
-        android:layout_margin="4dp"
-        android:hint="Weight"></EditText>
-
-    <EditText
-        android:id="@+id/ageEditText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:hint="Age"
-        android:inputType="number"></EditText>
-
-    <LinearLayout
-        android:id="@+id/runLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/runQuestion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:text="Do you go on runs?"></TextView>
-
-            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/goesOnRuns"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/yesRuns"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="yes" />
-
-                <RadioButton
-                    android:id="@+id/noRuns"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="no" />
-            </RadioGroup>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/walkLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <LinearLayout
+        <EditText
+            android:id="@+id/heightEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_margin="4dp"
+            android:hint="Height"></EditText>
 
-            <TextView
-                android:id="@+id/walkQuestion"
+        <EditText
+            android:id="@+id/weightEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/heightEditText"
+            android:layout_margin="4dp"
+            android:hint="Weight"></EditText>
+
+        <EditText
+            android:id="@+id/ageEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:hint="Age"
+            android:inputType="number"></EditText>
+
+        <LinearLayout
+            android:id="@+id/runLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_margin="4dp"
-                android:text="Do you go on walks?"></TextView>
+                android:layout_height="wrap_content">
 
-            <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/goesOnWalks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/yesWalks"
+                <TextView
+                    android:id="@+id/runQuestion"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="yes" />
+                    android:layout_margin="4dp"
+                    android:text="Do you go on runs?"></TextView>
 
-                <RadioButton
-                    android:id="@+id/noWalks"
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/goesOnRuns"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="no" />
-            </RadioGroup>
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/yesRuns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="yes" />
+
+                    <RadioButton
+                        android:id="@+id/noRuns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="no" />
+                </RadioGroup>
+            </LinearLayout>
+
         </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/walkLinearLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/walkQuestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="4dp"
+                    android:text="Do you go on walks?"></TextView>
+
+                <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:id="@+id/goesOnWalks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/yesWalks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="yes" />
+
+                    <RadioButton
+                        android:id="@+id/noWalks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="no" />
+                </RadioGroup>
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/signout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Disconnect from Google Fit"></Button>
+
+        <Button
+            android:id="@+id/finish"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="finish"></Button>
+
     </LinearLayout>
 
-
-    <Button
-        android:id="@+id/signout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Disconnect from Google Fit"></Button>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:id="@+id/finish"
-        android:text="finish">
-    </Button>
-
-</LinearLayout>
+</ScrollView>
