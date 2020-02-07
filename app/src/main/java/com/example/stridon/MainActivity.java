@@ -6,11 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.fitness.FitnessOptions;
-import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.tasks.Task;
 
 import android.app.Activity;
@@ -23,7 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
     private SignInButton signInButton;
 
-    private FitnessOptions fitnessOptions;
     private GoogleSignInAccount account;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -33,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.i("tag", "on create");
 
         signInButton = findViewById(R.id.signin);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -41,18 +38,8 @@ public class MainActivity extends AppCompatActivity {
                 signIn();
             }
         });
-        fitnessOptions = FitnessOptions.builder()
-                .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .addDataType(DataType.TYPE_STEP_COUNT_CUMULATIVE, FitnessOptions.ACCESS_READ)
-                .build();
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestId()
-                .addExtension(fitnessOptions)
-                .build();
-        // TODO possibly add google options to separate class
 
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
     }
 
