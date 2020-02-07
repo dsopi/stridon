@@ -100,8 +100,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private void goToSettings() {
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
-        Log.i("tag", "start activity with intent");
-
+        Log.i("tag", "go to settings intent");
+        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(settingsIntent);
     }
 
