@@ -52,7 +52,6 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("tag", "login activity account is null");
         } else {
             Log.i("tag", "login activity account for " + account.getEmail());
-            // TODO if user is already signed in, take to main page (skip settings too)
         }
 
     }
