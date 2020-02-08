@@ -17,7 +17,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private SignInButton signInButton;
 
@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Log.i("tag", "on create");
+        setContentView(R.layout.activity_login);
+        Log.i("tag", "login on create");
 
         signInButton = findViewById(R.id.signin);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -46,12 +46,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("tag", "on start");
+        Log.i("tag", "login on start");
         account = GoogleSignIn.getLastSignedInAccount(this);
         if (account == null) {
-            Log.i("tag", "main activity account is null");
+            Log.i("tag", "login activity account is null");
         } else {
-            Log.i("tag", "main activity account for " + account.getEmail());
+            Log.i("tag", "login activity account for " + account.getEmail());
             // TODO if user is already signed in, take to main page (skip settings too)
         }
 

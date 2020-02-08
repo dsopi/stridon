@@ -58,9 +58,9 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.i("tag", "signed out!");
-                        Intent mainScreenIntent = new Intent(HomeActivity.this, MainActivity.class);
-                        mainScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(mainScreenIntent);
+                        Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(loginIntent);
                     }
                 });
             }

@@ -96,18 +96,14 @@ public class SettingsActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.i("tag", "signed out!");
-                        Intent mainScreenIntent = new Intent(SettingsActivity.this, MainActivity.class);
-                        mainScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(mainScreenIntent);
+                        Intent loginIntent = new Intent(SettingsActivity.this, LoginActivity.class);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(loginIntent);
                     }
                 });
             }
         });
 
-//        Intent mainScreenIntent = new Intent(this, MainActivity.class);
-//        mainScreenIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-//        mainScreenIntent.putExtra("classFrom", SettingsActivity.class.toString());
-//        startActivity(mainScreenIntent);
     }
 
 
@@ -279,7 +275,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void goToHome(){
+    private void goToHome() {
         Intent homeIntent = new Intent(this, HomeActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(homeIntent);
