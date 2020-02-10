@@ -28,10 +28,10 @@ public class PersonalModelSharedPrefs {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
 
-    public static PersonalModelSharedPrefs getInstance(Context context) {
+    public static synchronized PersonalModelSharedPrefs getInstance(Context context) {
         if (personalModelSharedPrefs == null) {
             // not sure if this is the best way to get context
-            personalModelSharedPrefs = new PersonalModelSharedPrefs(context);
+            personalModelSharedPrefs = new PersonalModelSharedPrefs(context.getApplicationContext());
         }
         return personalModelSharedPrefs;
     }
