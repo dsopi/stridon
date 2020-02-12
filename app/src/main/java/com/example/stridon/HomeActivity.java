@@ -26,6 +26,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
+
         signOutButton = findViewById(R.id.signout);
 
         // TODO this signout button is just here for testing, eventually it will be moved
