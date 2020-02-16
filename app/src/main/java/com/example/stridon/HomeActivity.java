@@ -117,6 +117,7 @@ public class HomeActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.settingsOption:
                 Log.i(TAG, "settings");
+                goToSettings();
                 return true;
             case R.id.logoutOption:
                 Log.i(TAG, "logout");
@@ -335,5 +336,12 @@ public class HomeActivity extends AppCompatActivity
                 });
             }
         });
+    }
+
+    private void goToSettings() {
+        Intent settingsIntent = new Intent(this, SettingsActivity.class);
+        Log.i(TAG, "go to settings intent");
+        settingsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(settingsIntent);
     }
 }

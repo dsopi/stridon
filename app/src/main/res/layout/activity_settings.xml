@@ -114,14 +114,6 @@
             </LinearLayout>
         </LinearLayout>
 
-
-        <Button
-            android:id="@+id/signout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Disconnect from Google Fit"></Button>
-
         <Button
             android:id="@+id/finish"
             android:layout_width="wrap_content"

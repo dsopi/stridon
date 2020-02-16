@@ -25,7 +25,6 @@ import com.google.android.gms.tasks.Task;
 public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
-    private Button signOutButton;
     private RadioGroup goesOnRuns;
     private RadioGroup goesOnWalks;
     private Button finishButton;
@@ -37,7 +36,6 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        signOutButton = findViewById(R.id.signout);
         goesOnRuns = findViewById(R.id.goesOnRuns);
         goesOnWalks = findViewById(R.id.goesOnWalks);
         finishButton = findViewById(R.id.finish);
@@ -47,13 +45,6 @@ public class SettingsActivity extends AppCompatActivity {
          * {@link PersonalModelSharedPrefs}
          */
 
-        // TODO this signout button is just here for testing, eventually it will be moved since signout doesnt need to be in settings page
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signOut();
-            }
-        });
 
         goesOnRuns.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -88,34 +79,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private void signOut() {
-        mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Log.i(TAG, "revoked assess");
-                mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        Log.i(TAG, "signed out!");
-                        Intent loginIntent = new Intent(SettingsActivity.this, LoginActivity.class);
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(loginIntent);
-                    }
-                });
-            }
-        });
-
-    }
-
 
     private void goesOnRunsClicked(RadioGroup group, int checkedId) {
         switch (checkedId) {
             case R.id.yesRuns:
-//                Log.i("tag", "yes run ");
                 addRunEditTexts();
                 break;
             case R.id.noRuns:
-//                Log.i("tag", "no run ");
                 deleteRunEditTexts();
                 break;
             default:
