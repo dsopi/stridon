@@ -329,8 +329,7 @@ public class HomeActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         Log.i(TAG, "signed out!");
                         Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
-                        // TODO maybe not reorder to front? delete all screens from stack?
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(loginIntent);
                     }
                 });

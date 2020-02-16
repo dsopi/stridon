@@ -6,18 +6,21 @@ import android.content.SharedPreferences;
 public class PersonalModelSharedPrefs {
 
     private static String personalModelFile = "personal_model";
-    private static final String height = "height";
-    private static final String weight = "weight";
-    private static final String age = "age";
+    private static final String height = "height"; // centimeters
+    private static final String weight = "weight"; // pounds
+    private static final String age = "age"; // years
     // TODO type of Stride
+    private static final String totalRunSrides = "totalRunSrides";
+    private static final String totalWalkStrides = "totalWalkStrides";
+
     private static final String numRunsPerWeek = "numRunsPerWeek";
-    private static final String durationOfRuns = "durationOfRuns";
+    private static final String durationOfRuns = "durationOfRuns"; // minutes
     private static final String startTimeOfRuns = "startTimeOfRuns";
-    private static final String avgSpeedOfRuns = "avgSpeedOfRuns";
+    private static final String avgSpeedOfRuns = "avgSpeedOfRuns"; // miles per hour
     private static final String numWalksPerWeek = "numWalksPerWeek";
-    private static final String durationOfWalks = "durationOfWalks";
-    private static final String startTimeOfWalks = "startTImeOfWalks";
-    private static final String avgSpeedOfWalks = "avgSpeedOfWalks";
+    private static final String durationOfWalks = "durationOfWalks"; // minutes
+    private static final String startTimeOfWalks = "startTimeOfWalks";
+    private static final String avgSpeedOfWalks = "avgSpeedOfWalks"; // miles per hour
     // TODO time of last meal
     // TODO avg time of meals
     private static final String numStepsTakenThisDay = "numStepsTakenThisDay";
@@ -65,71 +68,88 @@ public class PersonalModelSharedPrefs {
         return prefs.getFloat(age, -1);
     }
 
-    public void setNumRunsPerWeek(int userNumRunsPerWeek){
+    public void setTotalRunSrides(int userTotalRunStrides) {
+        editor.putInt(totalRunSrides, userTotalRunStrides).apply();
+    }
+
+    public int getTotalRunStrides() {
+        return prefs.getInt(totalRunSrides, 1);
+    }
+
+    public void setTotalWalkStrides(int userTotalWalkStrides) {
+        editor.putInt(totalWalkStrides, userTotalWalkStrides).apply();
+        ;
+    }
+
+    public int getTotalWalkStrides() {
+        return prefs.getInt(totalWalkStrides, 1);
+    }
+
+    public void setNumRunsPerWeek(int userNumRunsPerWeek) {
         editor.putInt(numRunsPerWeek, userNumRunsPerWeek).apply();
     }
 
-    public int getNumRunsPerWeek(){
+    public int getNumRunsPerWeek() {
         return prefs.getInt(numRunsPerWeek, -1);
     }
 
-    public void setDurationOfRuns(int userDurationOfRuns){
+    public void setDurationOfRuns(int userDurationOfRuns) {
         editor.putInt(durationOfRuns, userDurationOfRuns).apply();
     }
 
-    public int getDurationOfRuns(){
+    public int getDurationOfRuns() {
         return prefs.getInt(durationOfRuns, -1);
     }
 
     // TODO how to store time?
-    public void setStartTimeOfRuns(String userStartTimeOfRuns){
+    public void setStartTimeOfRuns(String userStartTimeOfRuns) {
         editor.putString(startTimeOfRuns, userStartTimeOfRuns).apply();
     }
 
     // TODO what is default value
-    public String getStartTimeOfRuns(){
+    public String getStartTimeOfRuns() {
         return prefs.getString(startTimeOfRuns, "");
     }
 
-    public void setAvgSpeedOfRuns(float userAvgSpeedOfRuns){
+    public void setAvgSpeedOfRuns(float userAvgSpeedOfRuns) {
         editor.putFloat(avgSpeedOfRuns, userAvgSpeedOfRuns).apply();
     }
 
-    public float getAvgSpeedOfRuns(){
+    public float getAvgSpeedOfRuns() {
         return prefs.getFloat(avgSpeedOfRuns, -1);
     }
 
-    public void setNumWalksPerWeek(int userNumWalksPerWeek){
+    public void setNumWalksPerWeek(int userNumWalksPerWeek) {
         editor.putInt(numWalksPerWeek, userNumWalksPerWeek).apply();
     }
 
-    public int getNumWalksPerWeek(){
+    public int getNumWalksPerWeek() {
         return prefs.getInt(numWalksPerWeek, -1);
     }
 
-    public void setDurationOfWalks(int userDurationOfWalks){
+    public void setDurationOfWalks(int userDurationOfWalks) {
         editor.putInt(durationOfWalks, userDurationOfWalks).apply();
     }
 
-    public int getDurationOfWalks(){
+    public int getDurationOfWalks() {
         return prefs.getInt(durationOfWalks, -1);
     }
 
     // TODO how to store time?
-    public void setStartTimeOfWalks(String userStartTimeOfWalks){
+    public void setStartTimeOfWalks(String userStartTimeOfWalks) {
         editor.putString(startTimeOfWalks, userStartTimeOfWalks).apply();
     }
 
     // TODO what is default value
-    public String getStartTimeOfWalks(){
+    public String getStartTimeOfWalks() {
         return prefs.getString(startTimeOfWalks, "");
     }
 
-    public void setAvgSpeedOfWalks(float userAvgSpeedOfWalks){
+    public void setAvgSpeedOfWalks(float userAvgSpeedOfWalks) {
         editor.putFloat(avgSpeedOfWalks, userAvgSpeedOfWalks).apply();
     }
 
-    public float getAvgSpeedOfWalks(){
+    public float getAvgSpeedOfWalks() {
         return prefs.getFloat(avgSpeedOfWalks, -1);
     }
 
@@ -146,7 +166,7 @@ public class PersonalModelSharedPrefs {
         editor.putInt(avgNumStepsTakenPerDay, userAvgNumStepsTakenPerDay).apply();
     }
 
-    public int getAvgNumStepsTakenPerDay(){
+    public int getAvgNumStepsTakenPerDay() {
         return prefs.getInt(avgNumStepsTakenPerDay, -1);
     }
 
