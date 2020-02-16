@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 public class SettingsActivity extends AppCompatActivity {
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private Button signOutButton;
     private RadioGroup goesOnRuns;
@@ -77,12 +78,12 @@ public class SettingsActivity extends AppCompatActivity {
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
-        Log.i("tag", "settings activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
+        Log.i(TAG, "settings activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), MyGoogleOptions.fitnessOptions)) {
-            Log.i("tag", "currently has google fit permissions");
+            Log.i(TAG, "currently has google fit permissions");
         } else {
-            Log.i("tag", "currently doesn't have google fit permissions");
+            Log.i(TAG, "currently doesn't have google fit permissions");
 
         }
     }
@@ -91,11 +92,11 @@ public class SettingsActivity extends AppCompatActivity {
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Log.i("tag", "revoked assess");
+                Log.i(TAG, "revoked assess");
                 mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.i("tag", "signed out!");
+                        Log.i(TAG, "signed out!");
                         Intent loginIntent = new Intent(SettingsActivity.this, LoginActivity.class);
                         loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(loginIntent);

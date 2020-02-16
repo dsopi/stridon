@@ -19,6 +19,8 @@ import android.view.View;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final String TAG = LoginActivity.class.getSimpleName();
+
     private SignInButton signInButton;
 
     private GoogleSignInAccount account;
@@ -30,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Log.i("tag", "login on create");
+        Log.i(TAG, "login on create");
 
         signInButton = findViewById(R.id.signin);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -46,12 +48,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("tag", "login on start");
+        Log.i(TAG, "login on start");
         account = GoogleSignIn.getLastSignedInAccount(this);
         if (account == null) {
-            Log.i("tag", "login activity account is null");
+            Log.i(TAG, "login activity account is null");
         } else {
-            Log.i("tag", "login activity account for " + account.getEmail());
+            Log.i(TAG, "login activity account for " + account.getEmail());
         }
 
     }
@@ -76,7 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == RC_SIGN_IN) {
                 Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                Log.i("tag", "call handle signin");
+                Log.i(TAG, "call handle signin");
                 handleSignInResult(task);
             }
         }
@@ -89,17 +91,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
-            Log.i("tag", "signed in!");
+            Log.i(TAG, "signed in!");
             account = completedTask.getResult(ApiException.class);
-            Log.i("tag", "calling to go settings");
+            Log.i(TAG, "calling to go settings");
             goToSettings();
         } catch (ApiException e) {
-            Log.i("tag", "signInResult:failed code=" + e.getStatusCode());
+            Log.i(TAG, "signInResult:failed code=" + e.getStatusCode());
         }
     }
+
     private void goToSettings() {
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
-        Log.i("tag", "go to settings intent");
+        Log.i(TAG, "go to settings intent");
         settingsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(settingsIntent);
     }

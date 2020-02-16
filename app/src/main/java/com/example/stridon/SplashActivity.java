@@ -11,6 +11,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class SplashActivity extends AppCompatActivity {
 
+    private static final String TAG = SplashActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,13 +23,13 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("tag", "on start");
+        Log.i(TAG, "on start");
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account == null) {
-            Log.i("tag", "splash activity account is null");
+            Log.i(TAG, "splash activity account is null");
             goToLogin();
         } else {
-            Log.i("tag", "splash activity account for " + account.getEmail());
+            Log.i(TAG, "splash activity account for " + account.getEmail());
             goToHome();
         }
     }

@@ -5,8 +5,9 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,8 +47,6 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity
         implements OnMapReadyCallback {
 
-    private Button signOutButton;
-
     private GoogleSignInClient mGoogleSignInClient;
 
     private static final String TAG = HomeActivity.class.getSimpleName();
@@ -75,25 +74,15 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        signOutButton = findViewById(R.id.signout);
-
-        // TODO this signout button is just here for testing, eventually it will be moved
-        signOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signOut();
-            }
-        });
-
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
-        Log.i("tag", "home activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
+        Log.i(TAG, "home activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), MyGoogleOptions.fitnessOptions)) {
-            Log.i("tag", "currently has google fit permissions");
+            Log.i(TAG, "currently has google fit permissions");
         } else {
-            Log.i("tag", "currently doesn't have google fit permissions");
+            Log.i(TAG, "currently doesn't have google fit permissions");
         }
 
         //User Location
@@ -114,6 +103,29 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.common_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.settingsOption:
+                Log.i(TAG, "settings");
+                return true;
+            case R.id.logoutOption:
+                Log.i(TAG, "logout");
+                signOut();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -222,32 +234,32 @@ public class HomeActivity extends AppCompatActivity
 
         double s_dis = 1.0;
 
-        s_dis = s_dis/2.0;
+        s_dis = s_dis / 2.0;
         double lat_dis = (0.3 + (Math.random() * .4)) * s_dis;
         double lng_dis = s_dis - lat_dis;
-        if (Math.random() < .5){
+        if (Math.random() < .5) {
             lat_dis = lat_dis * -1.0;
         }
-        if (Math.random() < .5){
+        if (Math.random() < .5) {
             lng_dis = lng_dis * -1.0;
         }
 
         ArrayList<Double> lat_array = new ArrayList<Double>();
         ArrayList<Double> lng_array = new ArrayList<Double>();
 
-        lat_array.add(user_lat + lat_dis/69.0);
+        lat_array.add(user_lat + lat_dis / 69.0);
         lng_array.add(user_lng);
 
-        lat_array.add(user_lat + lat_dis/69.0);
-        lng_array.add(user_lng + lng_dis/59.0);
+        lat_array.add(user_lat + lat_dis / 69.0);
+        lng_array.add(user_lng + lng_dis / 59.0);
 
         lat_array.add(user_lat);
-        lng_array.add(user_lng + lng_dis/59.0);
+        lng_array.add(user_lng + lng_dis / 59.0);
 
-        getDirectionUrl(lat_array,lng_array);
+        getDirectionUrl(lat_array, lng_array);
     }
 
-    private void getDirectionUrl(ArrayList<Double> lat_array, ArrayList<Double> lng_array){
+    private void getDirectionUrl(ArrayList<Double> lat_array, ArrayList<Double> lng_array) {
 
         //Uses string building to make the url to pass to the volley
         String direction_url = "https://maps.googleapis.com/maps/api/directions/json?";
@@ -255,9 +267,9 @@ public class HomeActivity extends AppCompatActivity
         direction_url = direction_url + "destination=" + user_lat + "," + user_lng + "&";
         direction_url = direction_url + "mode=walking&waypoints=";
 
-        for(int i = 0; i < lat_array.size();i++){
+        for (int i = 0; i < lat_array.size(); i++) {
             direction_url = direction_url + "via:" + lat_array.get(i).toString() + "%2C" + lng_array.get(i).toString();
-            if(i < lat_array.size()-1){
+            if (i < lat_array.size() - 1) {
                 direction_url = direction_url + "%7C";
             }
         }
@@ -269,7 +281,7 @@ public class HomeActivity extends AppCompatActivity
         getPolyline(direction_url);
     }
 
-    private void getPolyline(String url){
+    private void getPolyline(String url) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -298,7 +310,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-    private void drawPolyline(String encoded){
+    private void drawPolyline(String encoded) {
         List<LatLng> points = PolyUtil.decode(encoded);
         Polyline trail = mMap.addPolyline(new PolylineOptions()
                 .clickable(false)
@@ -311,12 +323,13 @@ public class HomeActivity extends AppCompatActivity
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Log.i("tag", "revoked assess");
+                Log.i(TAG, "revoked assess");
                 mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Log.i("tag", "signed out!");
+                        Log.i(TAG, "signed out!");
                         Intent loginIntent = new Intent(HomeActivity.this, LoginActivity.class);
+                        // TODO maybe not reorder to front? delete all screens from stack?
                         loginIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                         startActivity(loginIntent);
                     }
