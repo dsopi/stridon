@@ -4,7 +4,11 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +24,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class StrideRecFragment extends Fragment {
+    private RecyclerView recyclerView;
+    private RecyclerView.Adapter mAdapter;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,6 +61,17 @@ public class StrideRecFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof StrideRecListener) {
+            mListener = (StrideRecListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement StrideRecListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -69,28 +87,31 @@ public class StrideRecFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_stride_rec, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onStrideRecSelected(uri);
-        }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        recyclerView = getActivity().findViewById(R.id.strideRecRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+
+        mAdapter = new StrideRecAdapter(new String[]{"walk", "run", "walk", "walk", "run"});
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof StrideRecListener) {
-            mListener = (StrideRecListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement StrideRecListener");
-        }
-    }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onStrideRecSelected(uri);
+        }
     }
 
     /**

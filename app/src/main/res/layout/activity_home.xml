@@ -10,7 +10,7 @@
     <fragment
         android:id="@+id/mapFragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         tools:context=".HomeActivity" />
@@ -18,7 +18,7 @@
     <fragment
         android:id="@+id/strideRecFragment"
         android:name="com.example.stridon.StrideRecFragment"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="bottom|center" />
 
