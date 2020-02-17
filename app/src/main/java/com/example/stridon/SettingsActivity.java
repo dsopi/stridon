@@ -1,11 +1,11 @@
 package com.example.stridon;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -19,10 +19,11 @@ import com.example.stridon.extras.MyGoogleOptions;
 import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+
 
 public class SettingsActivity extends AppCompatActivity {
+    private PersonalModelSharedPrefs personalModelSharedPrefs;
+
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
     private RadioGroup goesOnRuns;
@@ -35,6 +36,7 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        personalModelSharedPrefs = PersonalModelSharedPrefs.getInstance(this.getApplicationContext());
 
         goesOnRuns = findViewById(R.id.goesOnRuns);
         goesOnWalks = findViewById(R.id.goesOnWalks);
@@ -63,6 +65,7 @@ public class SettingsActivity extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                saveSettings();
                 goToHome();
             }
         });
@@ -128,7 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("distance of runs in miles");
             et.setId(R.id.distanceOfRuns);
-            et.setInputType(InputType.TYPE_CLASS_NUMBER);
+            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
             ll.addView(et);
         }
 
@@ -192,6 +195,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("# number of walks per week");
             et.setId(R.id.numberOfWalks);
+            et.setInputType(InputType.TYPE_CLASS_NUMBER);
             ll.addView(et);
         }
 
@@ -202,6 +206,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("duration of walks in minutes");
             et.setId(R.id.durationOfWalks);
+            et.setInputType(InputType.TYPE_CLASS_NUMBER);
             ll.addView(et);
         }
 
@@ -212,6 +217,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("distance of walks in miles");
             et.setId(R.id.distanceOfWalks);
+            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
             ll.addView(et);
         }
 
@@ -244,6 +250,77 @@ public class SettingsActivity extends AppCompatActivity {
         if (findViewById(R.id.timeOfWalks) != null) {
             ll.removeView(findViewById(R.id.timeOfWalks));
         }
+    }
+
+    private void saveSettings() {
+        // TODO do we want dialog to make fields required?
+
+        EditText height = findViewById(R.id.heightEditText);
+        if (!TextUtils.isEmpty(height.getText().toString()))
+            personalModelSharedPrefs.setHeight(Float.valueOf(height.getText().toString()));
+
+        EditText weight = findViewById(R.id.weightEditText);
+        if (!TextUtils.isEmpty(weight.getText().toString()))
+            personalModelSharedPrefs.setWeight(Integer.valueOf(weight.getText().toString()));
+
+        EditText age = findViewById(R.id.ageEditText);
+        if (!TextUtils.isEmpty(age.getText().toString()))
+            personalModelSharedPrefs.setAge(Integer.valueOf(age.getText().toString()));
+
+        EditText numberOfRuns = findViewById(R.id.numberOfRuns);
+        if (numberOfRuns != null && !TextUtils.isEmpty(numberOfRuns.getText().toString())) {
+            personalModelSharedPrefs.setNumRunsPerWeek(Integer.valueOf(numberOfRuns.getText().toString()));
+        }
+
+        EditText durationOfRuns = findViewById(R.id.durationOfRuns);
+        EditText distanceOfRuns = findViewById(R.id.distanceOfRuns);
+
+        if (durationOfRuns != null && distanceOfRuns != null && !TextUtils.isEmpty(distanceOfRuns.getText().toString()) && !TextUtils.isEmpty(durationOfRuns.getText().toString())) {
+            int durationInMinutes = Integer.valueOf(durationOfRuns.getText().toString());
+            personalModelSharedPrefs.setDurationOfRuns(durationInMinutes);
+            float durationInHours = durationInMinutes / (float) 60;
+
+            float avgSpeedOfRuns = Float.valueOf(distanceOfRuns.getText().toString()) / durationInHours;
+            personalModelSharedPrefs.setAvgSpeedOfRuns(avgSpeedOfRuns);
+        }
+
+        // TODO how to store time
+//        if (findViewById(R.id.timeOfRuns) != null) {
+//            EditText timeOfRuns = findViewById(R.id.timeOfRuns);
+//        }
+
+        EditText numberOfWalks = findViewById(R.id.numberOfWalks);
+        if (numberOfWalks != null && !TextUtils.isEmpty(numberOfWalks.getText().toString())) {
+            personalModelSharedPrefs.setNumWalksPerWeek(Integer.valueOf(numberOfWalks.getText().toString()));
+        }
+
+        EditText durationOfWalks = findViewById(R.id.durationOfWalks);
+        EditText distanceOfWalks = findViewById(R.id.distanceOfWalks);
+
+        if (durationOfWalks != null && distanceOfWalks != null && !TextUtils.isEmpty(durationOfWalks.getText().toString()) && !TextUtils.isEmpty(distanceOfWalks.getText().toString())) {
+            int durationInMinutes = Integer.valueOf(durationOfWalks.getText().toString());
+            personalModelSharedPrefs.setDurationOfWalks(durationInMinutes);
+            float durationInHours = durationInMinutes / (float) 60;
+
+            float avgSpeedOfWalks = Float.valueOf(distanceOfWalks.getText().toString()) / durationInHours;
+            personalModelSharedPrefs.setAvgSpeedOfWalks(avgSpeedOfWalks);
+        }
+
+//        if (findViewById(R.id.timeOfWalks) != null) {
+//            EditText timeOfWalks = findViewById(R.id.timeOfWalks);
+//        }
+
+
+        Log.i(TAG, "height " + personalModelSharedPrefs.getHeight());
+        Log.i(TAG, "weight " + personalModelSharedPrefs.getWeight());
+        Log.i(TAG, "age " + personalModelSharedPrefs.getAge());
+        Log.i(TAG, "numRuns " + personalModelSharedPrefs.getNumRunsPerWeek());
+        Log.i(TAG, "durationRuns " + personalModelSharedPrefs.getDurationOfRuns());
+        Log.i(TAG, "speedRuns " + personalModelSharedPrefs.getAvgSpeedOfRuns());
+        Log.i(TAG, "numWalks " + personalModelSharedPrefs.getNumWalksPerWeek());
+        Log.i(TAG, "durationWalks " + personalModelSharedPrefs.getDurationOfWalks());
+        Log.i(TAG, "speedWalks " + personalModelSharedPrefs.getAvgSpeedOfWalks());
+
     }
 
     private void goToHome() {
