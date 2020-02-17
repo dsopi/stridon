@@ -3,6 +3,7 @@ package com.example.stridon;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -45,11 +47,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnMapReadyCallback {
+        implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
+
+    private static final String TAG = HomeActivity.class.getSimpleName();
 
     private GoogleSignInClient mGoogleSignInClient;
 
-    private static final String TAG = HomeActivity.class.getSimpleName();
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     //These variables are used to detect
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -92,8 +96,8 @@ public class HomeActivity extends AppCompatActivity
         }
 
         //Load up the map
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
+                .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
 
         mQueue = Volley.newRequestQueue(this);
@@ -319,6 +323,9 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
+    public void onStrideRecSelected(Uri uri) {
+
+    }
 
     private void signOut() {
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
