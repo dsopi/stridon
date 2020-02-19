@@ -127,6 +127,11 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "logout");
                 signOut();
                 return true;
+
+            case R.id.StrideScreen:
+                Log.i(TAG, "stride screens");
+                goToStride();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -350,5 +355,12 @@ public class HomeActivity extends AppCompatActivity
         Log.i(TAG, "go to settings intent");
         settingsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(settingsIntent);
+    }
+
+    private void goToStride(){
+        Intent strideIntent = new Intent(this, StrideActivity.class);
+        Log.i(TAG, "go to Stride intent");
+        strideIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(strideIntent);
     }
 }
