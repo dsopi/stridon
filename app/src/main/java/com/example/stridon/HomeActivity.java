@@ -73,6 +73,8 @@ public class HomeActivity extends AppCompatActivity
     private double user_lat;
     private double user_lng;
 
+    private String encodedLine;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +83,7 @@ public class HomeActivity extends AppCompatActivity
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
-        Log.i(TAG, "home activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
+        //Log.i(TAG, "home activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
 
         if (GoogleSignIn.hasPermissions(GoogleSignIn.getLastSignedInAccount(this), MyGoogleOptions.fitnessOptions)) {
             Log.i(TAG, "currently has google fit permissions");
@@ -99,6 +101,8 @@ public class HomeActivity extends AppCompatActivity
         SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
                 .findFragmentById(R.id.mapFragment);
         mapFragment.getMapAsync(this);
+
+
 
         mQueue = Volley.newRequestQueue(this);
 
@@ -302,6 +306,7 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject path = routes.getJSONObject(0);
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
+                            encodedLine = encoded_line;
                             drawPolyline(encoded_line);
 
                         } catch (JSONException e) {
@@ -352,6 +357,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void goToSettings() {
         Intent settingsIntent = new Intent(this, SettingsActivity.class);
+
         Log.i(TAG, "go to settings intent");
         settingsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(settingsIntent);
@@ -359,6 +365,9 @@ public class HomeActivity extends AppCompatActivity
 
     private void goToStride(){
         Intent strideIntent = new Intent(this, StrideActivity.class);
+
+        strideIntent.putExtra("ENCODED", encodedLine);
+
         Log.i(TAG, "go to Stride intent");
         strideIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(strideIntent);

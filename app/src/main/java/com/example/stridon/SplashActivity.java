@@ -27,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account == null) {
             Log.i(TAG, "splash activity account is null");
-            goToLogin();
+            goToHome();
         } else {
             Log.i(TAG, "splash activity account for " + account.getEmail());
             goToHome();
