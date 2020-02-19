@@ -1,0 +1,13 @@
+[1mdiff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml[m
+[1mindex 9061aad..795e1f2 100644[m
+[1m--- a/app/src/main/AndroidManifest.xml[m
+[1m+++ b/app/src/main/AndroidManifest.xml[m
+[36m@@ -13,6 +13,8 @@[m
+         android:roundIcon="@mipmap/ic_launcher_round"[m
+         android:supportsRtl="true"[m
+         android:theme="@style/AppTheme">[m
+[32m+[m[32m        <activity android:name=".StrideResultActivity"></activity>[m
+[32m+[m
+         <meta-data[m
+             android:name="com.google.android.geo.API_KEY"[m
+             android:value="@string/google_maps_key" />[m
