@@ -30,8 +30,6 @@ public class SettingsActivity extends AppCompatActivity {
     private RadioGroup goesOnWalks;
     private Button finishButton;
 
-    private GoogleSignInClient mGoogleSignInClient;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +67,6 @@ public class SettingsActivity extends AppCompatActivity {
                 goToHome();
             }
         });
-
-        mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
         Log.i(TAG, "settings activity account for " + GoogleSignIn.getLastSignedInAccount(this).getEmail());
 

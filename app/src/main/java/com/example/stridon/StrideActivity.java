@@ -9,12 +9,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.stridon.extras.MyGoogleOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataPoint;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.request.OnDataPointListener;
+import com.google.android.gms.fitness.request.SensorRequest;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,6 +40,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.PolyUtil;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class StrideActivity extends AppCompatActivity
         implements OnMapReadyCallback {
@@ -57,11 +68,26 @@ public class StrideActivity extends AppCompatActivity
     private Button finishButton;
 
 
+    // step count and distance
+    private TextView stepCountTextView;
+    private TextView distanceTextView;
+    private int stepCount = 0;
+    private float distance = 0;
+    // for stepcount and distance sensors will return the step count/distance
+    // SINCE LAST READING therefore these booleans are used to
+    // ignore the first reading
+    boolean startedTrackingStepCount = false;
+    boolean startedTrackingDistance = false;
+
+    private GoogleSignInAccount account;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stride);
 
+        stepCountTextView = findViewById(R.id.stepsTextView);
+        distanceTextView = findViewById(R.id.distanceTextView);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -78,8 +104,7 @@ public class StrideActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
 
-
-        startButton  = findViewById(R.id.startButton);
+        startButton = findViewById(R.id.startButton);
         startButton.setText("Start!");
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +113,7 @@ public class StrideActivity extends AppCompatActivity
             }
         });
 
-        finishButton  = findViewById(R.id.finishButton);
+        finishButton = findViewById(R.id.finishButton);
         finishButton.setVisibility(View.GONE);
         finishButton.setText("Finish!");
         finishButton.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +125,23 @@ public class StrideActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account == null) {
+            Log.i(TAG, "account is null");
+        } else {
+            Log.i(TAG, "account for " + account.getEmail());
+        }
+        // TODO re ask for permission if needed, for now assume permission always granted
+        if (GoogleSignIn.hasPermissions(account, MyGoogleOptions.fitnessOptions)) {
+            Log.i("tag", "currently has google fit permissions");
+        } else {
+            Log.i("tag", "currently doesn't have google fit permissions");
+
+        }
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -117,8 +159,8 @@ public class StrideActivity extends AppCompatActivity
         System.out.println("ENCODED: " + encoded);
         List<LatLng> points = PolyUtil.decode(encoded);
         Polyline trail = mMap.addPolyline(new PolylineOptions()
-                    .clickable(false)
-                    .addAll(points));
+                .clickable(false)
+                .addAll(points));
     }
 
     private void getLocationPermission() {
@@ -154,6 +196,7 @@ public class StrideActivity extends AppCompatActivity
         }
         updateLocationUI();
     }
+
     private void updateLocationUI() {
         if (mMap == null) {
             return;
@@ -208,14 +251,14 @@ public class StrideActivity extends AppCompatActivity
         }
     }
 
-    public void start(){
+    public void start() {
         stopwatch.start();
         stopwatch.setBase(SystemClock.elapsedRealtime());
         updateTimer = SystemClock.elapsedRealtime();
         stopwatch.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
             public void onChronometerTick(Chronometer chronometer) {
-                if ((SystemClock.elapsedRealtime() - updateTimer >= 10000 )){
+                if ((SystemClock.elapsedRealtime() - updateTimer >= 10000)) {
                     getDeviceLocation();
                     updateTimer = SystemClock.elapsedRealtime();
                 }
@@ -223,15 +266,70 @@ public class StrideActivity extends AppCompatActivity
         });
         finishButton.setVisibility(View.VISIBLE);
         startButton.setVisibility(View.GONE);
+
+        stepCount = 0;
+        distance = 0;
+        Task<Void> sensorsResponse = Fitness.getSensorsClient(this, account)
+                .add(
+                        new SensorRequest.Builder()
+                                .setDataType(DataType.TYPE_STEP_COUNT_DELTA)
+                                .setSamplingRate(1, TimeUnit.MILLISECONDS)
+                                .build(),
+                        new myStepCountListener());
+
+        Task<Void> sensorsDistanceResponse = Fitness.getSensorsClient(this, account)
+                .add(
+                        new SensorRequest.Builder()
+                                .setDataType(DataType.TYPE_DISTANCE_DELTA)
+                                .setSamplingRate(1, TimeUnit.MILLISECONDS)
+                                .build(),
+                        new myDistanceListener());
     }
 
+    private class myStepCountListener implements OnDataPointListener {
+        @Override
+        public void onDataPoint(DataPoint dataPoint) {
+            Log.i(TAG, "on step count data point called");
+            Log.i(TAG, dataPoint.toString());
+            if (startedTrackingStepCount) {
+                if (dataPoint != null) {
+                    stepCount = stepCount + dataPoint.getValue(Field.FIELD_STEPS).asInt();
+                    stepCountTextView.setText("current steps " + stepCount);
+                }
+            } else {
+                startedTrackingStepCount = true;
+            }
+        }
+    }
+
+    private class myDistanceListener implements OnDataPointListener {
+        @Override
+        public void onDataPoint(DataPoint dataPoint) {
+            Log.i(TAG, "on distance data point called");
+            Log.i(TAG, dataPoint.toString());
+            if (startedTrackingDistance) {
+                if (dataPoint != null) {
+                    distance = distance + dataPoint.getValue(Field.FIELD_DISTANCE).asFloat();
+                    distanceTextView.setText("current distance " + distance);
+                }
+            } else {
+                startedTrackingDistance = true;
+            }
+        }
+    }
 
     //Will take the time and go to the results Screen
-    public void finish(){
+    public void finish() {
         stopwatch.stop();
         Intent resultsIntent = new Intent(this, StrideResultActivity.class);
         resultsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(resultsIntent);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // TODO remove listeners
+    }
 }
