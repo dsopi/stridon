@@ -94,7 +94,15 @@ public class StrideRecFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new StrideRecAdapter(new String[]{"walk", "run", "walk", "walk", "run"});
+        mAdapter = new StrideRecAdapter(new Stride[]{
+                new Stride(1,"walk", "adfadf"),
+                new Stride(123,"run", "adfhshsadf"),
+                new Stride(21,"walk", "adfassgfnsdf"),
+                new Stride(51,"run", "addfanmuuykfadf"),
+                new Stride(341,"walk", "ageknjyhfadf"),
+                new Stride(51,"walk", "nyjtjeyjwnwr")
+
+        });
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(dividerItemDecoration);

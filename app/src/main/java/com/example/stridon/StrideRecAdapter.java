@@ -10,22 +10,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.StrideViewHolder> {
-    private String[] strideRecs;
+    private Stride[] strideRecs;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class StrideViewHolder extends RecyclerView.ViewHolder {
         public TextView strideTypeTextView;
+        public TextView strideDistanceTextView;
+        public TextView strideEstimatedDuration;
 
         public StrideViewHolder(LinearLayout v) {
             super(v);
             strideTypeTextView = v.findViewById(R.id.strideType);
+            strideDistanceTextView = v.findViewById(R.id.strideDistance);
+            strideEstimatedDuration = v.findViewById(R.id.strideEstDuration);
         }
     }
 
 
-    public StrideRecAdapter(String[] myDataset) {
+    public StrideRecAdapter(Stride[] myDataset) {
         super();
         strideRecs = myDataset;
     }
@@ -42,7 +46,10 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
 
     @Override
     public void onBindViewHolder(@NonNull StrideRecAdapter.StrideViewHolder holder, int position) {
-        holder.strideTypeTextView.setText(strideRecs[position]);
+        holder.strideTypeTextView.setText(strideRecs[position].getStrideType());
+        holder.strideDistanceTextView.setText(String.valueOf(strideRecs[position].getDistance()));
+        holder.strideEstimatedDuration.setText("estimated duration");
+
     }
 
     @Override
