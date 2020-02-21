@@ -320,8 +320,14 @@ public class StrideActivity extends AppCompatActivity
 
     //Will take the time and go to the results Screen
     public void finish() {
+        long totalTime = SystemClock.elapsedRealtime() - stopwatch.getBase();
+
         stopwatch.stop();
         Intent resultsIntent = new Intent(this, StrideResultActivity.class);
+
+        resultsIntent.putExtra("stepCount", stepCount);
+        resultsIntent.putExtra("distance", distance);
+        resultsIntent.putExtra("totalTime", totalTime);
         resultsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(resultsIntent);
     }
