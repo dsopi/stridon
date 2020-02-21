@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.google.maps.android:android-maps-utils:0.5'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.libraries.places:places:2.0.0'
+    implementation 'com.facebook.stetho:stetho:1.5.1'
 }

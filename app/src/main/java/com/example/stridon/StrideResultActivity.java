@@ -33,14 +33,14 @@ public class StrideResultActivity extends AppCompatActivity {
         distanceView.setText("Distance: " + distance);
 
         //time
-        long totalSeconds = totalTime / 10000;
+        long totalSeconds = totalTime / 1000;
         long minutes = totalSeconds / 60;
         long seconds = totalSeconds % 60;
         timeView.setText("Time: " + minutes + ":" + seconds);
 
         //pace
         float rawSeconds = totalTime;
-        rawSeconds  = rawSeconds / 10000;
+        rawSeconds  = rawSeconds / 1000;
         float rawMinutes = rawSeconds / 60;
         float pace = distance / rawMinutes;
 

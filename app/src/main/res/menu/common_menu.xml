@@ -10,4 +10,11 @@
         android:id="@+id/StrideScreen"
         android:title="stride"/>
 
+    <item
+        android:id="@+id/storeStride"
+        android:title="store Stride"/>
+
+    <item
+        android:id="@+id/retrieveStride"
+        android:title="retrieve Stride"/>
 </menu>

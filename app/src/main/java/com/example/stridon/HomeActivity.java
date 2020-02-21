@@ -22,6 +22,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.stridon.SQLite.StrideDatabaseHelper;
 import com.example.stridon.extras.MyGoogleOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -75,6 +76,8 @@ public class HomeActivity extends AppCompatActivity
 
     private String encodedLine;
 
+    private StrideDatabaseHelper strideDatabaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,12 +106,11 @@ public class HomeActivity extends AppCompatActivity
         mapFragment.getMapAsync(this);
 
 
-
         mQueue = Volley.newRequestQueue(this);
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-
+        strideDatabaseHelper = StrideDatabaseHelper.getInstance(this);
     }
 
 
@@ -131,10 +133,17 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "logout");
                 signOut();
                 return true;
-
             case R.id.StrideScreen:
                 Log.i(TAG, "stride screens");
                 goToStride();
+                return true;
+            case R.id.storeStride:
+                Log.i(TAG, "store stride");
+                storeStride();
+                return true;
+            case R.id.retrieveStride:
+                Log.i(TAG, "retrieve stride");
+                retrieveStride();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -363,7 +372,7 @@ public class HomeActivity extends AppCompatActivity
         startActivity(settingsIntent);
     }
 
-    private void goToStride(){
+    private void goToStride() {
         Intent strideIntent = new Intent(this, StrideActivity.class);
 
         strideIntent.putExtra("ENCODED", encodedLine);
@@ -371,5 +380,17 @@ public class HomeActivity extends AppCompatActivity
         Log.i(TAG, "go to Stride intent");
         strideIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(strideIntent);
+    }
+
+    private void storeStride() {
+
+        Stride stride = new Stride(1, "run",
+                "encoded polyline");
+        StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
+        storeStrideTask.execute(stride);
+    }
+
+    private void retrieveStride() {
+
     }
 }
