@@ -378,7 +378,6 @@ public class HomeActivity extends AppCompatActivity
         strideIntent.putExtra("ENCODED", encodedLine);
 
         Log.i(TAG, "go to Stride intent");
-        strideIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(strideIntent);
     }
 

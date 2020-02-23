@@ -2,6 +2,8 @@ package com.example.stridon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +14,7 @@ public class StrideResultActivity extends AppCompatActivity {
     private TextView distanceView;
     private TextView paceView;
     private TextView timeView;
+    private Button homeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,14 @@ public class StrideResultActivity extends AppCompatActivity {
         timeView = findViewById(R.id.timeView);
         distanceView = findViewById(R.id.distanceView);
         paceView = findViewById(R.id.paceView);
+        homeButton = findViewById(R.id.homeButton);
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHome();
+            }
+        });
 
         stepsView.setText("Steps : " + stepCount);
         distanceView.setText("Distance: " + distance);
@@ -45,7 +56,11 @@ public class StrideResultActivity extends AppCompatActivity {
         float pace = distance / rawMinutes;
 
         paceView.setText("Pace: " +  pace + "meters/min");
+    }
 
-
+    private void goToHome() {
+        Intent homeIntent = new Intent(this, HomeActivity.class);
+        homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(homeIntent);
     }
 }
