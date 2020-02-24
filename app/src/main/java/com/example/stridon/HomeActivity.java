@@ -83,6 +83,10 @@ public class HomeActivity extends AppCompatActivity
     private double newDistance = 1.0;
     private boolean forBuilder = false;
 
+    private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
+    public double temp_today;
+    public JsonObjectRequest Weather;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,6 +133,8 @@ public class HomeActivity extends AppCompatActivity
         };
         transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
         transaction.commit();
+
+        Weather = getWeather();
     }
 
 
@@ -424,4 +430,33 @@ public class HomeActivity extends AppCompatActivity
     public void onStrideRecSelected(Stride stride) {
         Log.i(TAG, stride.toString());
     }
+
+    public JsonObjectRequest getWeather(){
+        String url = "https://api.openweathermap.org/data/2.5/weather?q=irvine&appid=" + API_KEY;
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject main  = response.getJSONObject("main");
+                    String temp = main.getString("temp");
+
+                    double x = Double.parseDouble(temp);
+                    double t = (x * 9/5) - 459.67;
+
+                    temp_today = t; // in Fahrenheit
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener(){
+            @Override
+            public void onErrorResponse(VolleyError error){
+                System.out.println("ERROR");
+            }
+        });
+
+        return jsonObjectRequest;
+    }
+
 }

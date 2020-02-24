@@ -14,11 +14,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.dpro.widgets.OnWeekdaysChangeListener;
+import com.dpro.widgets.WeekdaysPicker;
 import com.example.stridon.extras.MyGoogleOptions;
 import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
+import java.util.List;
 
 
 public class SettingsActivity extends AppCompatActivity {
@@ -323,5 +328,21 @@ public class SettingsActivity extends AppCompatActivity {
         Intent homeIntent = new Intent(this, HomeActivity.class);
         homeIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(homeIntent);
+    }
+
+    private List<String> WeekDayPicker(){
+        WeekdaysPicker widget = (WeekdaysPicker) findViewById(R.id.weekdays);
+        List<String> selectedDays = widget.getSelectedDaysText();
+        widget.setOnWeekdaysChangeListener(new OnWeekdaysChangeListener() {
+            @Override
+            public void onChange(View view, int clickedDayOfWeek, List<Integer> selectedDays) {
+                if (selectedDays.size() == 0){
+                    Toast.makeText(getApplicationContext(),"Please choose at least one day",Toast.LENGTH_SHORT);
+                }
+            }
+        });
+
+
+        return selectedDays;
     }
 }

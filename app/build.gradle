@@ -35,4 +35,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
     implementation 'com.google.android.libraries.places:places:2.0.0'
     implementation 'com.facebook.stetho:stetho:1.5.1'
+    implementation 'com.github.DavidProdinger:weekdays-selector:1.1.0'
 }

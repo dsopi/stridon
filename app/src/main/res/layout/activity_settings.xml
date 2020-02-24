@@ -123,6 +123,13 @@
             android:layout_gravity="center"
             android:text="finish"></Button>
 
+
+        <com.dpro.widgets.WeekdaysPicker
+            android:id="@+id/weekdays"
+            android:layout_width="match_parent"
+            android:layout_height="254dp"
+            app:sunday_first_day="false" />
+
     </LinearLayout>
 
 </ScrollView>
