@@ -1,7 +1,18 @@
 package com.example.stridon;
 
-public class Stride {
+import android.os.Parcel;
+import android.os.Parcelable;
 
+public class Stride implements Parcelable {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Stride createFromParcel(Parcel in) {
+            return new Stride(in);
+        }
+
+        public Stride[] newArray(int size) {
+            return new Stride[size];
+        }
+    };
 //    private double lat1;
 //    private double long1;
 //    private double lat2;
@@ -20,6 +31,14 @@ public class Stride {
         this.strideType = strideType;
         this.favorited = false;
         this.encodedPolyline = encodedPolyline;
+    }
+
+    public Stride(Parcel p){
+        this.distance = p.readInt();
+        this.strideType = p.readString();
+        String bool = p.readString();
+        this.favorited = Boolean.getBoolean(bool);
+        this.encodedPolyline = p.readString();
     }
 
     public String getEncodedPolyline() {
@@ -131,5 +150,18 @@ public class Stride {
 
     public void setFavorited(boolean favorited) {
         this.favorited = favorited;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(distance);
+        dest.writeString(strideType);
+        dest.writeString(String.valueOf(favorited));
+        dest.writeString(encodedPolyline);
     }
 }

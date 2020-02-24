@@ -24,17 +24,14 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class StrideRecFragment extends Fragment {
+    private static final String TAG = "StrideRecFrag";
+
     private RecyclerView recyclerView;
     private RecyclerView.Adapter mAdapter;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String STRIDE_RECS = "stride_recs";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    Stride[] strideRecs;
 
     private StrideRecListener mListener;
 
@@ -42,21 +39,24 @@ public class StrideRecFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public StrideRecFragment(Stride[] recs) {
+        strideRecs = recs;
+    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param recs
      * @return A new instance of fragment StrideRecFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static StrideRecFragment newInstance(String param1, String param2) {
-        StrideRecFragment fragment = new StrideRecFragment();
+    public static StrideRecFragment newInstance(Stride[] recs) {
+        StrideRecFragment fragment = new StrideRecFragment(recs);
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putParcelableArray(STRIDE_RECS, recs);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -75,8 +75,10 @@ public class StrideRecFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            strideRecs = (Stride[]) getArguments().getParcelableArray(STRIDE_RECS);
+            if (recyclerView != null && recyclerView.getAdapter() != null) {
+                recyclerView.getAdapter().notifyDataSetChanged();
+            }
         }
     }
 
@@ -84,28 +86,22 @@ public class StrideRecFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_stride_rec, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_stride_rec, container, false);
+        recyclerView = rootView.findViewById(R.id.strideRecRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setHasFixedSize(true);
+
+        mAdapter = new StrideRecAdapter(strideRecs);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        return rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        recyclerView = getActivity().findViewById(R.id.strideRecRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setHasFixedSize(true);
-
-        mAdapter = new StrideRecAdapter(new Stride[]{
-                new Stride(1,"walk", "adfadf"),
-                new Stride(123,"run", "adfhshsadf"),
-                new Stride(21,"walk", "adfassgfnsdf"),
-                new Stride(51,"run", "addfanmuuykfadf"),
-                new Stride(341,"walk", "ageknjyhfadf"),
-                new Stride(51,"walk", "nyjtjeyjwnwr")
-
-        });
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
-        recyclerView.setAdapter(mAdapter);
-        recyclerView.addItemDecoration(dividerItemDecoration);
     }
 
 

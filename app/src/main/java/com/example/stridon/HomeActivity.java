@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -111,6 +112,19 @@ public class HomeActivity extends AppCompatActivity
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         strideDatabaseHelper = StrideDatabaseHelper.getInstance(this);
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Stride[] strideRecs = new Stride[]{
+                new Stride(1, "walk", "adfadf"),
+                new Stride(123, "run", "adfhshsadf"),
+                new Stride(21, "walk", "adfassgfnsdf"),
+                new Stride(51, "run", "addfanmuuykfadf"),
+                new Stride(341, "walk", "ageknjyhfadf"),
+                new Stride(51, "walk", "nyjtjeyjwnwr")
+
+        };
+        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
+        transaction.commit();
     }
 
 
