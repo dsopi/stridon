@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
+        implements OnMapReadyCallback, StrideRecFragment.StrideRecListener, StrideRecAdapter.StrideRecClickListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -422,6 +422,15 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void retrieveStride() {
+
+    }
+
+
+    @Override
+    public void onStrideRecClick(Stride stride) {
+        Log.i(TAG, stride.toString());
+
+
 
     }
 }

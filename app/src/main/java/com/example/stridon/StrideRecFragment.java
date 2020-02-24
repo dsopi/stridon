@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,7 +92,7 @@ public class StrideRecFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new StrideRecAdapter(strideRecs);
+        mAdapter = new StrideRecAdapter(strideRecs, (StrideRecAdapter.StrideRecClickListener) getActivity());
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -117,6 +118,7 @@ public class StrideRecFragment extends Fragment {
             mListener.onStrideRecSelected(uri);
         }
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

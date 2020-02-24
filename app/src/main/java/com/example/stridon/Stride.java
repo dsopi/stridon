@@ -3,6 +3,8 @@ package com.example.stridon;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class Stride implements Parcelable {
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Stride createFromParcel(Parcel in) {
@@ -163,5 +165,12 @@ public class Stride implements Parcelable {
         dest.writeString(strideType);
         dest.writeString(String.valueOf(favorited));
         dest.writeString(encodedPolyline);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        String s = "Stride: " + strideType + " distance: " + distance + " polyline: " + encodedPolyline;
+        return s;
     }
 }

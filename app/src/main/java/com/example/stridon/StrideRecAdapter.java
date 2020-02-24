@@ -13,13 +13,19 @@ import androidx.recyclerview.widget.RecyclerView;
 public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.StrideViewHolder> {
     private Stride[] strideRecs;
 
+    private StrideRecClickListener mListener;
+
+    public interface StrideRecClickListener {
+        void onStrideRecClick(Stride stride);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
     public static class StrideViewHolder extends RecyclerView.ViewHolder {
-        public TextView strideTypeTextView;
-        public TextView strideDistanceTextView;
-        public TextView strideEstimatedDuration;
+        private TextView strideTypeTextView;
+        private TextView strideDistanceTextView;
+        private TextView strideEstimatedDuration;
 
         public StrideViewHolder(LinearLayout v) {
             super(v);
@@ -27,12 +33,25 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
             strideDistanceTextView = v.findViewById(R.id.strideDistance);
             strideEstimatedDuration = v.findViewById(R.id.strideEstDuration);
         }
+
+        public void bind(final Stride stride, final StrideRecClickListener listener) {
+            strideTypeTextView.setText(stride.getStrideType());
+            strideDistanceTextView.setText(String.valueOf(stride.getDistance()));
+            strideEstimatedDuration.setText("estimated duration");
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onStrideRecClick(stride);
+                }
+            });
+        }
     }
 
 
-    public StrideRecAdapter(Stride[] myDataset) {
+    public StrideRecAdapter(Stride[] myDataset, StrideRecClickListener listener) {
         super();
         strideRecs = myDataset;
+        mListener = listener;
     }
 
     @NonNull
@@ -47,10 +66,7 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
 
     @Override
     public void onBindViewHolder(@NonNull StrideRecAdapter.StrideViewHolder holder, int position) {
-        holder.strideTypeTextView.setText(strideRecs[position].getStrideType());
-        holder.strideDistanceTextView.setText(String.valueOf(strideRecs[position].getDistance()));
-        holder.strideEstimatedDuration.setText("estimated duration");
-
+        holder.bind(strideRecs[position], mListener);
     }
 
     @Override
