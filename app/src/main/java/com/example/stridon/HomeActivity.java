@@ -79,6 +79,10 @@ public class HomeActivity extends AppCompatActivity
 
     private StrideDatabaseHelper strideDatabaseHelper;
 
+    private ArrayList<Stride>strideList = new ArrayList<Stride>();
+    private double newDistance = 1.0;
+    private boolean forBuilder = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -249,7 +253,7 @@ public class HomeActivity extends AppCompatActivity
                                 user_lng = mLastKnownLocation.getLongitude();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(user_lat, user_lng), DEFAULT_ZOOM));
-                                getFourPoints();
+                                getFourPoints(1.0);
 
                             }
                         } else {
@@ -267,11 +271,8 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    private void getFourPoints() {
-
-        double s_dis = 1.0;
-
-        s_dis = s_dis / 2.0;
+    private void getFourPoints(double distance) {
+        double s_dis = distance / 2.0;
         double lat_dis = (0.3 + (Math.random() * .4)) * s_dis;
         double lng_dis = s_dis - lat_dis;
         if (Math.random() < .5) {
@@ -330,7 +331,13 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
                             encodedLine = encoded_line;
-                            drawPolyline(encoded_line);
+                            if (!forBuilder) {
+                                drawPolyline(encoded_line);
+                            }
+                            else{
+                                Stride newStride = new Stride(newDistance,"Run",encodedLine);
+                                strideList.add(newStride);
+                            }
 
                         } catch (JSONException e) {
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
@@ -355,6 +362,17 @@ public class HomeActivity extends AppCompatActivity
                 .addAll(points));
 
     }
+
+    private void generateStrides(double distance){
+        newDistance = distance;
+        forBuilder = true;
+        strideList.clear();
+        for(int i = 0; i  < 5; i++){
+            getFourPoints(distance);
+        }
+    }
+
+
 
     public void onStrideRecSelected(Uri uri) {
 

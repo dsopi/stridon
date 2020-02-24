@@ -21,12 +21,12 @@ public class Stride implements Parcelable {
 //    private double long3;
 //    private double lat4;
 //    private double long4;
-    private int distance;
+    private double distance;
     private String strideType;
     private boolean favorited;
     private String encodedPolyline;
 
-    public Stride(int distance, String strideType, String encodedPolyline) {
+    public Stride(double distance, String strideType, String encodedPolyline) {
         this.distance = distance;
         this.strideType = strideType;
         this.favorited = false;
@@ -34,7 +34,7 @@ public class Stride implements Parcelable {
     }
 
     public Stride(Parcel p){
-        this.distance = p.readInt();
+        this.distance = p.readDouble();
         this.strideType = p.readString();
         String bool = p.readString();
         this.favorited = Boolean.getBoolean(bool);
@@ -128,11 +128,11 @@ public class Stride implements Parcelable {
 //        this.long4 = long4;
 //    }
 
-    public int getDistance() {
+    public double getDistance() {
         return distance;
     }
 
-    public void setDistance(int distance) {
+    public void setDistance(double distance) {
         this.distance = distance;
     }
 
@@ -159,7 +159,7 @@ public class Stride implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(distance);
+        dest.writeDouble(distance);
         dest.writeString(strideType);
         dest.writeString(String.valueOf(favorited));
         dest.writeString(encodedPolyline);
