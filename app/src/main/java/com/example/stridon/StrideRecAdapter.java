@@ -13,10 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.StrideViewHolder> {
     private Stride[] strideRecs;
 
-    private StrideRecClickListener mListener;
+    private StrideRecItemListener mListener;
 
-    public interface StrideRecClickListener {
-        void onStrideRecClick(Stride stride);
+    public interface StrideRecItemListener {
+        void onStrideRecItemClick(Stride stride);
     }
 
     // Provide a reference to the views for each data item
@@ -34,21 +34,20 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
             strideEstimatedDuration = v.findViewById(R.id.strideEstDuration);
         }
 
-        public void bind(final Stride stride, final StrideRecClickListener listener) {
+        public void bind(final Stride stride, final StrideRecItemListener listener) {
             strideTypeTextView.setText(stride.getStrideType());
             strideDistanceTextView.setText(String.valueOf(stride.getDistance()));
             strideEstimatedDuration.setText("estimated duration");
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onStrideRecClick(stride);
+                    listener.onStrideRecItemClick(stride);
                 }
             });
         }
     }
 
-
-    public StrideRecAdapter(Stride[] myDataset, StrideRecClickListener listener) {
+    public StrideRecAdapter(Stride[] myDataset, StrideRecItemListener listener) {
         super();
         strideRecs = myDataset;
         mListener = listener;

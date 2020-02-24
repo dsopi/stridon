@@ -24,7 +24,7 @@ import android.view.ViewGroup;
  * Use the {@link StrideRecFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class StrideRecFragment extends Fragment {
+public class StrideRecFragment extends Fragment implements StrideRecAdapter.StrideRecItemListener {
     private static final String TAG = "StrideRecFrag";
 
     private RecyclerView recyclerView;
@@ -92,7 +92,7 @@ public class StrideRecFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setHasFixedSize(true);
 
-        mAdapter = new StrideRecAdapter(strideRecs, (StrideRecAdapter.StrideRecClickListener) getActivity());
+        mAdapter = new StrideRecAdapter(strideRecs, this);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), RecyclerView.VERTICAL);
         recyclerView.setAdapter(mAdapter);
         recyclerView.addItemDecoration(dividerItemDecoration);
@@ -112,10 +112,12 @@ public class StrideRecFragment extends Fragment {
         mListener = null;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onStrideRecSelected(uri);
+    @Override
+    public void onStrideRecItemClick(Stride stride) {
+        if (mListener != null){
+            mListener.onStrideRecSelected(stride);
+        } else {
+            Log.i(TAG, "StrideRecListener is null");
         }
     }
 
@@ -132,6 +134,6 @@ public class StrideRecFragment extends Fragment {
      */
     public interface StrideRecListener {
         // TODO: Update argument type and name
-        void onStrideRecSelected(Uri uri);
+        void onStrideRecSelected(Stride stride);
     }
 }

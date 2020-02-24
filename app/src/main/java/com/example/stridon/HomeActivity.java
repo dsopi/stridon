@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnMapReadyCallback, StrideRecFragment.StrideRecListener, StrideRecAdapter.StrideRecClickListener {
+        implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -372,12 +372,6 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-
-
-    public void onStrideRecSelected(Uri uri) {
-
-    }
-
     private void signOut() {
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -427,10 +421,7 @@ public class HomeActivity extends AppCompatActivity
 
 
     @Override
-    public void onStrideRecClick(Stride stride) {
+    public void onStrideRecSelected(Stride stride) {
         Log.i(TAG, stride.toString());
-
-
-
     }
 }
