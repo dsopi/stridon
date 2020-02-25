@@ -1,5 +1,7 @@
 package com.example.stridon;
 
+import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.StrideViewHolder> {
     private Stride[] strideRecs;
+    private int currPos = -1;
 
     private StrideRecItemListener mListener;
 
@@ -34,17 +37,6 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
             strideEstimatedDuration = v.findViewById(R.id.strideEstDuration);
         }
 
-        public void bind(final Stride stride, final StrideRecItemListener listener) {
-            strideTypeTextView.setText(stride.getStrideType());
-            strideDistanceTextView.setText(String.valueOf(stride.getDistance()));
-            strideEstimatedDuration.setText("estimated duration");
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onStrideRecItemClick(stride);
-                }
-            });
-        }
     }
 
     public StrideRecAdapter(Stride[] myDataset, StrideRecItemListener listener) {
@@ -68,8 +60,29 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
     }
 
     @Override
-    public void onBindViewHolder(@NonNull StrideRecAdapter.StrideViewHolder holder, int position) {
-        holder.bind(strideRecs[position], mListener);
+    public void onBindViewHolder(@NonNull StrideRecAdapter.StrideViewHolder holder, final int position) {
+        final Stride stride = strideRecs[position];
+        holder.strideTypeTextView.setText(stride.getStrideType());
+        holder.strideDistanceTextView.setText(String.valueOf(stride.getDistance()));
+        holder.strideEstimatedDuration.setText("estimated duration");
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int oldPosition = currPos;
+                currPos = position;
+                notifyItemChanged(oldPosition);
+                notifyItemChanged(currPos);
+                mListener.onStrideRecItemClick(stride);
+            }
+        });
+        Log.i("adapter position", String.valueOf(currPos) );
+        Log.i("adapter position", String.valueOf(position));
+        // if user clicked on this item, or user hasn't clicked any item and its the first item
+        if (currPos == position || currPos == -1 && position == 0){
+            holder.itemView.setBackgroundColor(Color.parseColor("#F0F0F0"));
+        } else {
+            holder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"));
+        }
     }
 
     @Override
