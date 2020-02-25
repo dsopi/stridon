@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -88,7 +89,7 @@ public class HomeActivity extends AppCompatActivity
     StrideRecFragment strideRecFragment = null;
 
     Button startStrideButton;
-
+    TextView weatherTextView;
 
     private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
     public double temp_today;
@@ -100,6 +101,8 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
 
         startStrideButton = findViewById(R.id.startStrideButton);
+        weatherTextView = findViewById(R.id.weatherTextView);
+
         startStrideButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,9 +152,13 @@ public class HomeActivity extends AppCompatActivity
         transaction.add(R.id.strideRecFragContainer, strideRecFragment);
         transaction.commit();
 
-        Weather = getWeather();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Weather = getWeather();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -488,6 +495,10 @@ public class HomeActivity extends AppCompatActivity
                     double t = (x * 9 / 5) - 459.67;
 
                     temp_today = t; // in Fahrenheit
+                    if (temp_today != 0)
+                        weatherTextView.setText((int)temp_today + " deg F");
+                    else
+                        weatherTextView.setText("");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -498,7 +509,7 @@ public class HomeActivity extends AppCompatActivity
                 System.out.println("ERROR");
             }
         });
-
+        mQueue.add(jsonObjectRequest);
         return jsonObjectRequest;
     }
 

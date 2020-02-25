@@ -6,14 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <Button
-        android:id="@+id/startStrideButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="start stride">
-
-    </Button>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -42,5 +34,23 @@
             android:layout_weight="1"></FrameLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/weatherTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_margin="4dp"
+        android:text=" deg F"
+        android:textColor="@color/quantum_black_text"
+        android:textSize="20sp"></TextView>
+
+    <Button
+        android:id="@+id/startStrideButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:text="start stride"
+        android:textColor="@color/quantum_black_text"></Button>
 </FrameLayout>
 
