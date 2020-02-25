@@ -78,9 +78,11 @@ public class HomeActivity extends AppCompatActivity
 
     private StrideDatabaseHelper strideDatabaseHelper;
 
-    private ArrayList<Stride>strideList = new ArrayList<Stride>();
+    private ArrayList<Stride> strideList = new ArrayList<Stride>();
     private double newDistance = 1.0;
     private int pityCounter = 5;
+
+    StrideRecFragment strideRecFragment = null;
 
 
     private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
@@ -121,7 +123,7 @@ public class HomeActivity extends AppCompatActivity
 
         strideDatabaseHelper = StrideDatabaseHelper.getInstance(this);
 
-//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 //        Stride[] strideRecs = new Stride[]{
 //                new Stride(1, "walk", "adfadf"),
 //                new Stride(123, "run", "adfhshsadf"),
@@ -131,8 +133,9 @@ public class HomeActivity extends AppCompatActivity
 //                new Stride(51, "walk", "nyjtjeyjwnwr")
 //
 //        };
-//        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
-//        transaction.commit();
+        strideRecFragment = StrideRecFragment.newInstance(strideList.toArray(new Stride[strideList.size()]));
+        transaction.add(R.id.strideRecFragContainer, strideRecFragment);
+        transaction.commit();
 
         Weather = getWeather();
     }
@@ -337,15 +340,15 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
 
-                            Stride newStride = new Stride(newDistance,"Run",encoded_line);
+                            Stride newStride = new Stride(newDistance, "Run", encoded_line);
                             strideList.add(newStride);
 
                             //draw the initial line
-                            if(strideList.size() == 1){
+                            if (strideList.size() == 1) {
                                 encodedLine = encoded_line;
                                 drawPolyline(encoded_line);
                             }
-                            if(strideList.size() >= 6){
+                            if (strideList.size() >= 6) {
                                 linkStrideListToRecFragment();
                             }
 
@@ -353,7 +356,7 @@ public class HomeActivity extends AppCompatActivity
                         } catch (JSONException e) {
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
                             pityCounter--;
-                            if (pityCounter > 0){
+                            if (pityCounter > 0) {
                                 getFourPoints(newDistance);
                             }
                             e.printStackTrace();
@@ -378,10 +381,10 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void generateStrides(double distance){
+    private void generateStrides(double distance) {
         newDistance = distance;
         strideList.clear();
-        for(int i = 0; i  < 6; i++){
+        for (int i = 0; i < 6; i++) {
             getFourPoints(distance);
         }
     }
@@ -441,34 +444,43 @@ public class HomeActivity extends AppCompatActivity
         encodedLine = stride.getEncodedPolyline();
     }
 
-    private void linkStrideListToRecFragment(){
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        Stride[] strideRecs = strideList.toArray(new Stride[strideList.size()]);
-        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
-        transaction.commit();
+    private void linkStrideListToRecFragment() {
+        if (strideRecFragment != null) {
+            Log.i(TAG, "striderec is not null");
+            Log.i(TAG, "stride rec " + strideList.toString());
+            strideRecFragment.setStrideRecs(strideList.toArray(new Stride[strideList.size()]));
+        } else {
+            Log.i(TAG, "striderec is null");
+
+        }
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        Stride[] strideRecs = strideList.toArray(new Stride[strideList.size()]);
+//        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
+//        transaction.commit();
+
     }
 
-    public JsonObjectRequest getWeather(){
+    public JsonObjectRequest getWeather() {
         String url = "https://api.openweathermap.org/data/2.5/weather?q=irvine&appid=" + API_KEY;
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    JSONObject main  = response.getJSONObject("main");
+                    JSONObject main = response.getJSONObject("main");
                     String temp = main.getString("temp");
 
                     double x = Double.parseDouble(temp);
-                    double t = (x * 9/5) - 459.67;
+                    double t = (x * 9 / 5) - 459.67;
 
                     temp_today = t; // in Fahrenheit
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-        }, new Response.ErrorListener(){
+        }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error){
+            public void onErrorResponse(VolleyError error) {
                 System.out.println("ERROR");
             }
         });

@@ -26,7 +26,7 @@ public class StrideRecFragment extends Fragment implements StrideRecAdapter.Stri
     private static final String TAG = "StrideRecFrag";
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private StrideRecAdapter mAdapter;
 
     private static final String STRIDE_RECS = "stride_recs";
 
@@ -137,7 +137,7 @@ public class StrideRecFragment extends Fragment implements StrideRecAdapter.Stri
 
     public void setStrideRecs(Stride[] strideRecs) {
         this.strideRecs = strideRecs;
-       // mAdapter.setStrideRecs(strideRecs);
+        mAdapter.setStrideRecs(strideRecs);
         if (recyclerView != null && recyclerView.getAdapter() != null) {
             recyclerView.getAdapter().notifyDataSetChanged();
         }
