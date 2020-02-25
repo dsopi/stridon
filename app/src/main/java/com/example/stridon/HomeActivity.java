@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -74,7 +76,8 @@ public class HomeActivity extends AppCompatActivity
     private double user_lat;
     private double user_lng;
 
-    private String encodedLine;
+    private Stride currStride;
+//    private String encodedLine;
 
     private StrideDatabaseHelper strideDatabaseHelper;
 
@@ -83,6 +86,8 @@ public class HomeActivity extends AppCompatActivity
     private int pityCounter = 5;
 
     StrideRecFragment strideRecFragment = null;
+
+    Button startStrideButton;
 
 
     private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
@@ -94,6 +99,13 @@ public class HomeActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        startStrideButton = findViewById(R.id.startStrideButton);
+        startStrideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToStride(currStride);
+            }
+        });
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
 
@@ -160,10 +172,10 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "logout");
                 signOut();
                 return true;
-            case R.id.StrideScreen:
-                Log.i(TAG, "stride screens");
-                goToStride();
-                return true;
+//            case R.id.StrideScreen:
+//                Log.i(TAG, "stride screens");
+//                goToStride();
+//                return true;
             case R.id.storeStride:
                 Log.i(TAG, "store stride");
                 storeStride();
@@ -345,8 +357,9 @@ public class HomeActivity extends AppCompatActivity
 
                             //draw the initial line
                             if (strideList.size() == 1) {
-                                encodedLine = encoded_line;
-                                drawPolyline(encoded_line);
+                                currStride = strideList.get(0);
+//                                encodedLine = encoded_line;
+                                drawPolyline(currStride.getEncodedPolyline());
                             }
                             if (strideList.size() >= 6) {
                                 linkStrideListToRecFragment();
@@ -415,10 +428,10 @@ public class HomeActivity extends AppCompatActivity
         startActivity(settingsIntent);
     }
 
-    private void goToStride() {
+    private void goToStride(Stride stride) {
         Intent strideIntent = new Intent(this, StrideActivity.class);
 
-        strideIntent.putExtra("ENCODED", encodedLine);
+        strideIntent.putExtra("ENCODED", stride.getEncodedPolyline());
 
         Log.i(TAG, "go to Stride intent");
         startActivity(strideIntent);
@@ -440,8 +453,9 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onStrideRecSelected(Stride stride) {
         mMap.clear();
+        currStride = stride;
         drawPolyline(stride.getEncodedPolyline());
-        encodedLine = stride.getEncodedPolyline();
+//        encodedLine = stride.getEncodedPolyline();
     }
 
     private void linkStrideListToRecFragment() {

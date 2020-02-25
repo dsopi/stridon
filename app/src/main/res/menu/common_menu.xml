@@ -6,9 +6,6 @@
     <item
         android:id="@+id/logoutOption"
         android:title="logout" />
-    <item
-        android:id="@+id/StrideScreen"
-        android:title="stride"/>
 
     <item
         android:id="@+id/storeStride"
