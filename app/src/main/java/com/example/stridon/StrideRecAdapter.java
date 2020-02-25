@@ -53,6 +53,10 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
         mListener = listener;
     }
 
+    public void setStrideRecs(Stride[] toChange) {
+        this.strideRecs = toChange;
+    }
+
     @NonNull
     @Override
     public StrideRecAdapter.StrideViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

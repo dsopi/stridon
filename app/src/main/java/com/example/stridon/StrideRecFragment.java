@@ -1,19 +1,17 @@
 package com.example.stridon;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 
 /**
@@ -135,5 +133,13 @@ public class StrideRecFragment extends Fragment implements StrideRecAdapter.Stri
     public interface StrideRecListener {
         // TODO: Update argument type and name
         void onStrideRecSelected(Stride stride);
+    }
+
+    public void setStrideRecs(Stride[] strideRecs) {
+        this.strideRecs = strideRecs;
+       // mAdapter.setStrideRecs(strideRecs);
+        if (recyclerView != null && recyclerView.getAdapter() != null) {
+            recyclerView.getAdapter().notifyDataSetChanged();
+        }
     }
 }

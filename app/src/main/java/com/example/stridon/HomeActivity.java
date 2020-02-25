@@ -337,7 +337,7 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
 
-                            Stride newStride = new Stride(newDistance,"Run",encodedLine);
+                            Stride newStride = new Stride(newDistance,"Run",encoded_line);
                             strideList.add(newStride);
 
                             //draw the initial line
