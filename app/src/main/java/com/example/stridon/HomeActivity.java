@@ -126,11 +126,6 @@ public class HomeActivity extends AppCompatActivity
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-        //Load up the map
-        SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
-                .findFragmentById(R.id.mapFragment);
-        mapFragment.getMapAsync(this);
-
 
         mQueue = Volley.newRequestQueue(this);
 
@@ -139,15 +134,8 @@ public class HomeActivity extends AppCompatActivity
         strideDatabaseHelper = StrideDatabaseHelper.getInstance(this);
 
         FragmentTransaction transaction = fragmentManager.beginTransaction();
-//        Stride[] strideRecs = new Stride[]{
-//                new Stride(1, "walk", "adfadf"),
-//                new Stride(123, "run", "adfhshsadf"),
-//                new Stride(21, "walk", "adfassgfnsdf"),
-//                new Stride(51, "run", "addfanmuuykfadf"),
-//                new Stride(341, "walk", "ageknjyhfadf"),
-//                new Stride(51, "walk", "nyjtjeyjwnwr")
-//
-//        };
+        // at first recyclerview will have empty list
+        // once all the strides have been retrieved, it will notify recyclerview of new list
         strideRecFragment = StrideRecFragment.newInstance(strideList.toArray(new Stride[strideList.size()]));
         transaction.add(R.id.strideRecFragContainer, strideRecFragment);
         transaction.commit();
@@ -158,6 +146,10 @@ public class HomeActivity extends AppCompatActivity
     protected void onStart() {
         super.onStart();
         Weather = getWeather();
+        //Load up the map
+        SupportMapFragment mapFragment = (SupportMapFragment) fragmentManager
+                .findFragmentById(R.id.mapFragment);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -179,10 +171,6 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "logout");
                 signOut();
                 return true;
-//            case R.id.StrideScreen:
-//                Log.i(TAG, "stride screens");
-//                goToStride();
-//                return true;
             case R.id.storeStride:
                 Log.i(TAG, "store stride");
                 storeStride();
@@ -201,10 +189,9 @@ public class HomeActivity extends AppCompatActivity
 
         //assign the google map to mMap
         mMap = googleMap;
-
+        mMap.clear();
         getLocationPermission();
         updateLocationUI();
-
         getDeviceLocation();
     }
 
