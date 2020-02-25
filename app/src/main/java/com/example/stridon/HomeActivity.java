@@ -3,7 +3,6 @@ package com.example.stridon;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -81,7 +80,8 @@ public class HomeActivity extends AppCompatActivity
 
     private ArrayList<Stride>strideList = new ArrayList<Stride>();
     private double newDistance = 1.0;
-    private boolean forBuilder = false;
+    private int pityCounter = 5;
+
 
     private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
     public double temp_today;
@@ -121,18 +121,18 @@ public class HomeActivity extends AppCompatActivity
 
         strideDatabaseHelper = StrideDatabaseHelper.getInstance(this);
 
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        Stride[] strideRecs = new Stride[]{
-                new Stride(1, "walk", "adfadf"),
-                new Stride(123, "run", "adfhshsadf"),
-                new Stride(21, "walk", "adfassgfnsdf"),
-                new Stride(51, "run", "addfanmuuykfadf"),
-                new Stride(341, "walk", "ageknjyhfadf"),
-                new Stride(51, "walk", "nyjtjeyjwnwr")
-
-        };
-        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
-        transaction.commit();
+//        FragmentTransaction transaction = fragmentManager.beginTransaction();
+//        Stride[] strideRecs = new Stride[]{
+//                new Stride(1, "walk", "adfadf"),
+//                new Stride(123, "run", "adfhshsadf"),
+//                new Stride(21, "walk", "adfassgfnsdf"),
+//                new Stride(51, "run", "addfanmuuykfadf"),
+//                new Stride(341, "walk", "ageknjyhfadf"),
+//                new Stride(51, "walk", "nyjtjeyjwnwr")
+//
+//        };
+//        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
+//        transaction.commit();
 
         Weather = getWeather();
     }
@@ -259,7 +259,7 @@ public class HomeActivity extends AppCompatActivity
                                 user_lng = mLastKnownLocation.getLongitude();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(user_lat, user_lng), DEFAULT_ZOOM));
-                                getFourPoints(1.0);
+                                generateStrides(1.0);
 
                             }
                         } else {
@@ -336,17 +336,26 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject path = routes.getJSONObject(0);
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
-                            encodedLine = encoded_line;
-                            if (!forBuilder) {
+
+                            Stride newStride = new Stride(newDistance,"Run",encodedLine);
+                            strideList.add(newStride);
+
+                            //draw the initial line
+                            if(strideList.size() == 1){
+                                encodedLine = encoded_line;
                                 drawPolyline(encoded_line);
                             }
-                            else{
-                                Stride newStride = new Stride(newDistance,"Run",encodedLine);
-                                strideList.add(newStride);
+                            if(strideList.size() >= 6){
+                                linkStrideListToRecFragment();
                             }
+
 
                         } catch (JSONException e) {
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
+                            pityCounter--;
+                            if (pityCounter > 0){
+                                getFourPoints(newDistance);
+                            }
                             e.printStackTrace();
                         }
                     }
@@ -371,9 +380,8 @@ public class HomeActivity extends AppCompatActivity
 
     private void generateStrides(double distance){
         newDistance = distance;
-        forBuilder = true;
         strideList.clear();
-        for(int i = 0; i  < 5; i++){
+        for(int i = 0; i  < 6; i++){
             getFourPoints(distance);
         }
     }
@@ -428,7 +436,16 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onStrideRecSelected(Stride stride) {
-        Log.i(TAG, stride.toString());
+        mMap.clear();
+        drawPolyline(stride.getEncodedPolyline());
+        encodedLine = stride.getEncodedPolyline();
+    }
+
+    private void linkStrideListToRecFragment(){
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        Stride[] strideRecs = strideList.toArray(new Stride[strideList.size()]);
+        transaction.add(R.id.strideRecFragContainer, StrideRecFragment.newInstance(strideRecs));
+        transaction.commit();
     }
 
     public JsonObjectRequest getWeather(){
