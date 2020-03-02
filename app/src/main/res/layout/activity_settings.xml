@@ -17,8 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:inputType="number"
-            android:hint="Height"></EditText>
+            android:hint="Height"
+            android:inputType="number"></EditText>
 
         <EditText
             android:id="@+id/weightEditText"
@@ -26,8 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/heightEditText"
             android:layout_margin="4dp"
-            android:inputType="number"
-            android:hint="Weight"></EditText>
+            android:hint="Weight"
+            android:inputType="number"></EditText>
 
         <EditText
             android:id="@+id/ageEditText"
@@ -123,11 +123,26 @@
             android:layout_gravity="center"
             android:text="finish"></Button>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run Days"></TextView>
 
         <com.dpro.widgets.WeekdaysPicker
-            android:id="@+id/weekdays"
+            android:id="@+id/timeOfRuns"
             android:layout_width="match_parent"
-            android:layout_height="254dp"
+            android:layout_height="wrap_content"
+            app:sunday_first_day="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Walk Days"></TextView>
+
+        <com.dpro.widgets.WeekdaysPicker
+            android:id="@+id/timeOfWalks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             app:sunday_first_day="false" />
 
     </LinearLayout>

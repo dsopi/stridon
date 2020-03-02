@@ -14,14 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import com.dpro.widgets.OnWeekdaysChangeListener;
 import com.dpro.widgets.WeekdaysPicker;
 import com.example.stridon.extras.MyGoogleOptions;
 import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 
 import java.util.List;
 
@@ -34,6 +31,8 @@ public class SettingsActivity extends AppCompatActivity {
     private RadioGroup goesOnRuns;
     private RadioGroup goesOnWalks;
     private Button finishButton;
+    private WeekdaysPicker runWeekdaysPicker;
+    private WeekdaysPicker walkWeekdaysPicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +43,9 @@ public class SettingsActivity extends AppCompatActivity {
         goesOnRuns = findViewById(R.id.goesOnRuns);
         goesOnWalks = findViewById(R.id.goesOnWalks);
         finishButton = findViewById(R.id.finish);
+
+        runWeekdaysPicker = findViewById(R.id.timeOfRuns);
+        walkWeekdaysPicker = findViewById(R.id.timeOfWalks);
 
         /**
          * TODO the values for each input should be pre-filled with previously entered values in
@@ -136,16 +138,6 @@ public class SettingsActivity extends AppCompatActivity {
             ll.addView(et);
         }
 
-        if (findViewById(R.id.timeOfRuns) == null) {
-            EditText et = new EditText(this);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            p.gravity = Gravity.CENTER_HORIZONTAL;
-            et.setLayoutParams(p);
-            et.setHint("time of runs");
-            et.setId(R.id.timeOfRuns);
-            et.setInputType(InputType.TYPE_CLASS_DATETIME);
-            ll.addView(et);
-        }
     }
 
     private void deleteRunEditTexts() {
@@ -163,9 +155,9 @@ public class SettingsActivity extends AppCompatActivity {
             ll.removeView(findViewById(R.id.distanceOfRuns));
         }
 
-        if (findViewById(R.id.timeOfRuns) != null) {
-            ll.removeView(findViewById(R.id.timeOfRuns));
-        }
+//        if (findViewById(R.id.timeOfRuns) != null) {
+//            ll.removeView(findViewById(R.id.timeOfRuns));
+//        }
     }
 
     private void goesOnWalksClicked(RadioGroup group, int checkedId) {
@@ -222,15 +214,15 @@ public class SettingsActivity extends AppCompatActivity {
             ll.addView(et);
         }
 
-        if (findViewById(R.id.timeOfWalks) == null) {
-            EditText et = new EditText(this);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            p.gravity = Gravity.CENTER_HORIZONTAL;
-            et.setLayoutParams(p);
-            et.setHint("time of walks");
-            et.setId(R.id.timeOfWalks);
-            ll.addView(et);
-        }
+//        if (findViewById(R.id.timeOfWalks) == null) {
+//            EditText et = new EditText(this);
+//            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            p.gravity = Gravity.CENTER_HORIZONTAL;
+//            et.setLayoutParams(p);
+//            et.setHint("time of walks");
+//            et.setId(R.id.timeOfWalks);
+//            ll.addView(et);
+//        }
     }
 
     private void deleteWalkEditTexts() {
@@ -248,9 +240,9 @@ public class SettingsActivity extends AppCompatActivity {
             ll.removeView(findViewById(R.id.distanceOfWalks));
         }
 
-        if (findViewById(R.id.timeOfWalks) != null) {
-            ll.removeView(findViewById(R.id.timeOfWalks));
-        }
+//        if (findViewById(R.id.timeOfWalks) != null) {
+//            ll.removeView(findViewById(R.id.timeOfWalks));
+//        }
     }
 
     private void saveSettings() {
@@ -285,10 +277,7 @@ public class SettingsActivity extends AppCompatActivity {
             personalModelSharedPrefs.setAvgSpeedOfRuns(avgSpeedOfRuns);
         }
 
-        // TODO how to store time
-//        if (findViewById(R.id.timeOfRuns) != null) {
-//            EditText timeOfRuns = findViewById(R.id.timeOfRuns);
-//        }
+        storeRunDays();
 
         EditText numberOfWalks = findViewById(R.id.numberOfWalks);
         if (numberOfWalks != null && !TextUtils.isEmpty(numberOfWalks.getText().toString())) {
@@ -307,9 +296,7 @@ public class SettingsActivity extends AppCompatActivity {
             personalModelSharedPrefs.setAvgSpeedOfWalks(avgSpeedOfWalks);
         }
 
-//        if (findViewById(R.id.timeOfWalks) != null) {
-//            EditText timeOfWalks = findViewById(R.id.timeOfWalks);
-//        }
+        storeWalkDays();
 
 
         Log.i(TAG, "height " + personalModelSharedPrefs.getHeight());
@@ -322,6 +309,8 @@ public class SettingsActivity extends AppCompatActivity {
         Log.i(TAG, "durationWalks " + personalModelSharedPrefs.getDurationOfWalks());
         Log.i(TAG, "speedWalks " + personalModelSharedPrefs.getAvgSpeedOfWalks());
 
+        Log.i(TAG, "run days " + personalModelSharedPrefs.getStartTimeOfRuns());
+
     }
 
     private void goToHome() {
@@ -330,19 +319,16 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(homeIntent);
     }
 
-    private List<String> WeekDayPicker(){
-        WeekdaysPicker widget = (WeekdaysPicker) findViewById(R.id.weekdays);
-        List<String> selectedDays = widget.getSelectedDaysText();
-        widget.setOnWeekdaysChangeListener(new OnWeekdaysChangeListener() {
-            @Override
-            public void onChange(View view, int clickedDayOfWeek, List<Integer> selectedDays) {
-                if (selectedDays.size() == 0){
-                    Toast.makeText(getApplicationContext(),"Please choose at least one day",Toast.LENGTH_SHORT);
-                }
-            }
-        });
-
-
-        return selectedDays;
+    private void storeRunDays() {
+        List<String> days = runWeekdaysPicker.getSelectedDaysText();
+        Log.i(TAG, days.toString().replace("[","").replace("]", ""));
+        personalModelSharedPrefs.setStartTimeOfRuns(days.toString().replace("[","").replace("]", ""));
     }
+
+    private void storeWalkDays() {
+        List<String> days = walkWeekdaysPicker.getSelectedDaysText();
+        Log.i(TAG, days.toString());
+        personalModelSharedPrefs.setStartTimeOfWalks(days.toString().replace("[","").replace("]", ""));
+    }
+
 }
