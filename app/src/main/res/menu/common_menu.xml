@@ -9,9 +9,13 @@
 
     <item
         android:id="@+id/storeStride"
-        android:title="store Stride"/>
+        android:title="store Stride" />
 
     <item
         android:id="@+id/retrieveStride"
-        android:title="retrieve Stride"/>
+        android:title="retrieve Stride" />
+
+    <item
+        android:id="@+id/buildModel"
+        android:title="build model" />
 </menu>

@@ -1,8 +1,11 @@
 package com.example.stridon;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.JobIntentService;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -54,6 +58,7 @@ public class HomeActivity extends AppCompatActivity
         implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
+    public static final String NOTIF_CHANNEL_ID = "Stride notification channel";
 
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -140,6 +145,7 @@ public class HomeActivity extends AppCompatActivity
         transaction.add(R.id.strideRecFragContainer, strideRecFragment);
         transaction.commit();
 
+        createNotificationChannel();
     }
 
     @Override
@@ -178,6 +184,10 @@ public class HomeActivity extends AppCompatActivity
             case R.id.retrieveStride:
                 Log.i(TAG, "retrieve stride");
                 retrieveStride();
+                return true;
+            case R.id.buildModel:
+                Log.i(TAG, "build model");
+                buildModel();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -352,7 +362,7 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject distance = path2.getJSONObject("distance");
                             int meters = distance.getInt("value");
 
-                            double actualDistance = meters/1609.0;
+                            double actualDistance = meters / 1609.0;
                             actualDistance = Math.round(actualDistance * 100.0) / 100.0;
                             System.out.println("actualDistance: " + actualDistance);
 
@@ -493,7 +503,7 @@ public class HomeActivity extends AppCompatActivity
 
                     temp_today = t; // in Fahrenheit
                     if (temp_today != 0)
-                        weatherTextView.setText((int)temp_today + " deg F");
+                        weatherTextView.setText((int) temp_today + " deg F");
                     else
                         weatherTextView.setText("");
                 } catch (JSONException e) {
@@ -510,4 +520,24 @@ public class HomeActivity extends AppCompatActivity
         return jsonObjectRequest;
     }
 
+    private void buildModel() {
+        Intent serviceIntent = new Intent(this, BuildModelService.class);
+        BuildModelService.enqueueWork(this, serviceIntent);
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Stride notifications";
+            String description = "notifications for users to go on a Stride";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NOTIF_CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }
