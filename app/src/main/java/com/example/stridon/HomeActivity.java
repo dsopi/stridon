@@ -346,7 +346,17 @@ public class HomeActivity extends AppCompatActivity
                             JSONObject overview = path.getJSONObject("overview_polyline");
                             String encoded_line = overview.getString("points");
 
-                            Stride newStride = new Stride(newDistance, "Run", encoded_line);
+                            //Parse the JSON to get the actual distance
+                            JSONArray legs = path.getJSONArray("legs");
+                            JSONObject path2 = legs.getJSONObject(0);
+                            JSONObject distance = path2.getJSONObject("distance");
+                            int meters = distance.getInt("value");
+
+                            double actualDistance = meters/1609.0;
+                            actualDistance = Math.round(actualDistance * 100.0) / 100.0;
+                            System.out.println("actualDistance: " + actualDistance);
+
+                            Stride newStride = new Stride(actualDistance, "Run", encoded_line);
                             strideList.add(newStride);
 
                             //draw the initial line
@@ -355,7 +365,7 @@ public class HomeActivity extends AppCompatActivity
 //                                encodedLine = encoded_line;
                                 drawPolyline(currStride.getEncodedPolyline());
                             }
-                            if (strideList.size() >= 6) {
+                            if (strideList.size() >= 5) {
                                 linkStrideListToRecFragment();
                             }
 
@@ -391,7 +401,7 @@ public class HomeActivity extends AppCompatActivity
     private void generateStrides(double distance) {
         newDistance = distance;
         strideList.clear();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 5; i++) {
             getFourPoints(distance);
         }
     }
