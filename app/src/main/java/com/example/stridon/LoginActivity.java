@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                 signIn();
             }
         });
-
+        Log.i(TAG, ":)");
         mGoogleSignInClient = GoogleSignIn.getClient(this, MyGoogleOptions.gso);
     }
 

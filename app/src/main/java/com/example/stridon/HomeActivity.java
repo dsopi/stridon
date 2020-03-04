@@ -493,7 +493,7 @@ public class HomeActivity extends AppCompatActivity
 
                     temp_today = t; // in Fahrenheit
                     if (temp_today != 0)
-                        weatherTextView.setText((int)temp_today + " deg F");
+                        weatherTextView.setText((int)temp_today + " °F");
                     else
                         weatherTextView.setText("");
                 } catch (JSONException e) {
