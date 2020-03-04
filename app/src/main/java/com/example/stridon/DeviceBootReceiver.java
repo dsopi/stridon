@@ -1,0 +1,42 @@
+package com.example.stridon;
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
+import android.widget.Toast;
+
+import java.util.Calendar;
+
+public class DeviceBootReceiver extends BroadcastReceiver {
+
+    PendingIntent alarmIntent;
+    AlarmManager alarmManager;
+
+    public DeviceBootReceiver() {
+        super();
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
+            setAlarm(context);
+        }
+    }
+
+    public void setAlarm(Context context) {
+        if (alarmManager == null) {
+            alarmManager = (AlarmManager) context.getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+        }
+        if (alarmIntent == null) {
+            Intent receiverIntent = new Intent(context, BuildModelReceiver.class);
+            alarmIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, 0);
+        }
+
+//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTime().getTime(), 6000, alarmIntent);
+//        Toast.makeText(context, "ALARM SET in device boot receiver", Toast.LENGTH_SHORT).show();
+//        Log.i("device boot receiver", "set alarm");
+    }
+}
