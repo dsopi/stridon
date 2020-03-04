@@ -20,6 +20,7 @@ import com.example.stridon.extras.MyGoogleOptions;
 import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,14 +45,8 @@ public class SettingsActivity extends AppCompatActivity {
         goesOnWalks = findViewById(R.id.goesOnWalks);
         finishButton = findViewById(R.id.finish);
 
-        runWeekdaysPicker = findViewById(R.id.timeOfRuns);
-        walkWeekdaysPicker = findViewById(R.id.timeOfWalks);
-
-        /**
-         * TODO the values for each input should be pre-filled with previously entered values in
-         * {@link PersonalModelSharedPrefs}
-         */
-
+        runWeekdaysPicker = findViewById(R.id.daysOfRuns);
+        walkWeekdaysPicker = findViewById(R.id.daysOfWalks);
 
         goesOnRuns.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -85,6 +80,71 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        populatePrefs();
+
+    }
+
+    private void populatePrefs(){
+
+        if (personalModelSharedPrefs.getHeight() != -1){
+            EditText height = findViewById(R.id.heightEditText);
+            height.setText(String.valueOf(personalModelSharedPrefs.getHeight()));
+        }
+
+        if (personalModelSharedPrefs.getWeight() != -1){
+            EditText weight = findViewById(R.id.weightEditText);
+            weight.setText(String.valueOf(personalModelSharedPrefs.getWeight()));
+        }
+
+        if (personalModelSharedPrefs.getAge() != -1){
+            EditText age = findViewById(R.id.ageEditText);
+            age.setText(String.valueOf(personalModelSharedPrefs.getAge()));
+        }
+
+        if (!TextUtils.isEmpty(personalModelSharedPrefs.getDaysOfRuns())){
+            List<Integer> days = new ArrayList<>();
+            for (String i : personalModelSharedPrefs.getDaysOfRuns().split(", ")){
+                days.add(Integer.valueOf(i));
+            }
+            runWeekdaysPicker.setSelectedDays(days);
+        }
+
+        if (personalModelSharedPrefs.getDurationOfRuns() != -1){
+            goesOnRuns.check(R.id.yesRuns);
+            EditText durationOfRuns = findViewById(R.id.durationOfRuns);
+            durationOfRuns.setText(String.valueOf(personalModelSharedPrefs.getDurationOfRuns()));
+        }
+
+        if (personalModelSharedPrefs.getDistanceOfRuns() != -1){
+            goesOnRuns.check(R.id.yesRuns);
+            EditText distanceOfRuns = findViewById(R.id.distanceOfRuns);
+            distanceOfRuns.setText(String.valueOf(personalModelSharedPrefs.getDistanceOfRuns()));
+        }
+
+        if (!TextUtils.isEmpty(personalModelSharedPrefs.getDaysOfWalks())){
+            List<Integer> days = new ArrayList<>();
+            for (String i : personalModelSharedPrefs.getDaysOfWalks().split(", ")){
+                days.add(Integer.valueOf(i));
+            }
+            walkWeekdaysPicker.setSelectedDays(days);
+        }
+
+        if (personalModelSharedPrefs.getDurationOfWalks() != -1){
+            goesOnWalks.check(R.id.yesWalks);
+            EditText durationOfWalks = findViewById(R.id.durationOfWalks);
+            durationOfWalks.setText(String.valueOf(personalModelSharedPrefs.getDurationOfWalks()));
+        }
+
+        if (personalModelSharedPrefs.getDistanceOfWalks() != -1){
+            goesOnWalks.check(R.id.yesWalks);
+            EditText distanceOfWalks = findViewById(R.id.distanceOfWalks);
+            distanceOfWalks.setText(String.valueOf(personalModelSharedPrefs.getDistanceOfWalks()));
+        }
+    }
+
 
     private void goesOnRunsClicked(RadioGroup group, int checkedId) {
         switch (checkedId) {
@@ -100,21 +160,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // TODO ADD CHECKS TO MAKE SURE USER DOESN'T ENTER IN OUTRAGEOUS INPUT FOR NUMBER OF RUNS,
-    // TODO DURATION OF RUNS, AND
-    // TODO CHANGE TIME OF RUNS TO BE A TIME PICKER
     private void addRunEditTexts() {
         LinearLayout ll = findViewById(R.id.runLinearLayout);
 
-        if (findViewById(R.id.numberOfRuns) == null) {
-            EditText et = new EditText(this);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            p.gravity = Gravity.CENTER_HORIZONTAL;
-            et.setLayoutParams(p);
-            et.setHint("# number of runs per week");
-            et.setId(R.id.numberOfRuns);
-            et.setInputType(InputType.TYPE_CLASS_NUMBER);
-            ll.addView(et);
-        }
+//        if (findViewById(R.id.numberOfRuns) == null) {
+//            EditText et = new EditText(this);
+//            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            p.gravity = Gravity.CENTER_HORIZONTAL;
+//            et.setLayoutParams(p);
+//            et.setHint("# number of runs per week");
+//            et.setId(R.id.numberOfRuns);
+//            et.setInputType(InputType.TYPE_CLASS_NUMBER);
+//            ll.addView(et);
+//        }
 
         if (findViewById(R.id.durationOfRuns) == null) {
             EditText et = new EditText(this);
@@ -143,9 +201,9 @@ public class SettingsActivity extends AppCompatActivity {
     private void deleteRunEditTexts() {
         LinearLayout ll = findViewById(R.id.runLinearLayout);
 
-        if (findViewById(R.id.numberOfRuns) != null) {
-            ll.removeView(findViewById(R.id.numberOfRuns));
-        }
+//        if (findViewById(R.id.numberOfRuns) != null) {
+//            ll.removeView(findViewById(R.id.numberOfRuns));
+//        }
 
         if (findViewById(R.id.durationOfRuns) != null) {
             ll.removeView(findViewById(R.id.durationOfRuns));
@@ -176,21 +234,19 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     // TODO ADD CHECKS TO MAKE SURE USER DOESN'T ENTER IN OUTRAGEOUS INPUT FOR NUMBER OF WALKS,
-    // TODO DURATION OF WALKS, AND
-    // TODO CHANGE TIME OF WALKS TO BE A TIME PICKER
     private void addWalkEditTexts() {
         LinearLayout ll = findViewById(R.id.walkLinearLayout);
 
-        if (findViewById(R.id.numberOfWalks) == null) {
-            EditText et = new EditText(this);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            p.gravity = Gravity.CENTER_HORIZONTAL;
-            et.setLayoutParams(p);
-            et.setHint("# number of walks per week");
-            et.setId(R.id.numberOfWalks);
-            et.setInputType(InputType.TYPE_CLASS_NUMBER);
-            ll.addView(et);
-        }
+//        if (findViewById(R.id.numberOfWalks) == null) {
+//            EditText et = new EditText(this);
+//            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//            p.gravity = Gravity.CENTER_HORIZONTAL;
+//            et.setLayoutParams(p);
+//            et.setHint("# number of walks per week");
+//            et.setId(R.id.numberOfWalks);
+//            et.setInputType(InputType.TYPE_CLASS_NUMBER);
+//            ll.addView(et);
+//        }
 
         if (findViewById(R.id.durationOfWalks) == null) {
             EditText et = new EditText(this);
@@ -228,9 +284,9 @@ public class SettingsActivity extends AppCompatActivity {
     private void deleteWalkEditTexts() {
         LinearLayout ll = findViewById(R.id.walkLinearLayout);
 
-        if (findViewById(R.id.numberOfWalks) != null) {
-            ll.removeView(findViewById(R.id.numberOfWalks));
-        }
+//        if (findViewById(R.id.numberOfWalks) != null) {
+//            ll.removeView(findViewById(R.id.numberOfWalks));
+//        }
 
         if (findViewById(R.id.durationOfWalks) != null) {
             ll.removeView(findViewById(R.id.durationOfWalks));
@@ -260,10 +316,10 @@ public class SettingsActivity extends AppCompatActivity {
         if (!TextUtils.isEmpty(age.getText().toString()))
             personalModelSharedPrefs.setAge(Integer.valueOf(age.getText().toString()));
 
-        EditText numberOfRuns = findViewById(R.id.numberOfRuns);
-        if (numberOfRuns != null && !TextUtils.isEmpty(numberOfRuns.getText().toString())) {
-            personalModelSharedPrefs.setNumRunsPerWeek(Integer.valueOf(numberOfRuns.getText().toString()));
-        }
+//        EditText numberOfRuns = findViewById(R.id.numberOfRuns);
+//        if (numberOfRuns != null && !TextUtils.isEmpty(numberOfRuns.getText().toString())) {
+//            personalModelSharedPrefs.setNumRunsPerWeek(Integer.valueOf(numberOfRuns.getText().toString()));
+//        }
 
         EditText durationOfRuns = findViewById(R.id.durationOfRuns);
         EditText distanceOfRuns = findViewById(R.id.distanceOfRuns);
@@ -271,18 +327,18 @@ public class SettingsActivity extends AppCompatActivity {
         if (durationOfRuns != null && distanceOfRuns != null && !TextUtils.isEmpty(distanceOfRuns.getText().toString()) && !TextUtils.isEmpty(durationOfRuns.getText().toString())) {
             int durationInMinutes = Integer.valueOf(durationOfRuns.getText().toString());
             personalModelSharedPrefs.setDurationOfRuns(durationInMinutes);
-            float durationInHours = durationInMinutes / (float) 60;
-
-            float avgSpeedOfRuns = Float.valueOf(distanceOfRuns.getText().toString()) / durationInHours;
-            personalModelSharedPrefs.setAvgSpeedOfRuns(avgSpeedOfRuns);
+//            float durationInHours = durationInMinutes / (float) 60;
+//
+//            float avgSpeedOfRuns = Float.valueOf(distanceOfRuns.getText().toString()) / durationInHours;
+//            personalModelSharedPrefs.setAvgSpeedOfRuns(avgSpeedOfRuns);
         }
 
         storeRunDays();
 
-        EditText numberOfWalks = findViewById(R.id.numberOfWalks);
-        if (numberOfWalks != null && !TextUtils.isEmpty(numberOfWalks.getText().toString())) {
-            personalModelSharedPrefs.setNumWalksPerWeek(Integer.valueOf(numberOfWalks.getText().toString()));
-        }
+//        EditText numberOfWalks = findViewById(R.id.numberOfWalks);
+//        if (numberOfWalks != null && !TextUtils.isEmpty(numberOfWalks.getText().toString())) {
+//            personalModelSharedPrefs.setNumWalksPerWeek(Integer.valueOf(numberOfWalks.getText().toString()));
+//        }
 
         EditText durationOfWalks = findViewById(R.id.durationOfWalks);
         EditText distanceOfWalks = findViewById(R.id.distanceOfWalks);
@@ -292,8 +348,8 @@ public class SettingsActivity extends AppCompatActivity {
             personalModelSharedPrefs.setDurationOfWalks(durationInMinutes);
             float durationInHours = durationInMinutes / (float) 60;
 
-            float avgSpeedOfWalks = Float.valueOf(distanceOfWalks.getText().toString()) / durationInHours;
-            personalModelSharedPrefs.setAvgSpeedOfWalks(avgSpeedOfWalks);
+//            float avgSpeedOfWalks = Float.valueOf(distanceOfWalks.getText().toString()) / durationInHours;
+//            personalModelSharedPrefs.setAvgSpeedOfWalks(avgSpeedOfWalks);
         }
 
         storeWalkDays();
@@ -302,15 +358,12 @@ public class SettingsActivity extends AppCompatActivity {
         Log.i(TAG, "height " + personalModelSharedPrefs.getHeight());
         Log.i(TAG, "weight " + personalModelSharedPrefs.getWeight());
         Log.i(TAG, "age " + personalModelSharedPrefs.getAge());
-        Log.i(TAG, "numRuns " + personalModelSharedPrefs.getNumRunsPerWeek());
+        Log.i(TAG, "run days " + personalModelSharedPrefs.getDaysOfRuns());
         Log.i(TAG, "durationRuns " + personalModelSharedPrefs.getDurationOfRuns());
-        Log.i(TAG, "speedRuns " + personalModelSharedPrefs.getAvgSpeedOfRuns());
-        Log.i(TAG, "numWalks " + personalModelSharedPrefs.getNumWalksPerWeek());
+        Log.i(TAG, "distanceRuns" + personalModelSharedPrefs.getDistanceOfRuns());
+        Log.i(TAG, "walk days " + personalModelSharedPrefs.getDaysOfWalks());
         Log.i(TAG, "durationWalks " + personalModelSharedPrefs.getDurationOfWalks());
-        Log.i(TAG, "speedWalks " + personalModelSharedPrefs.getAvgSpeedOfWalks());
-
-        Log.i(TAG, "run days " + personalModelSharedPrefs.getStartTimeOfRuns());
-
+        Log.i(TAG, "distanceWalks " + personalModelSharedPrefs.getDistanceOfWalks());
     }
 
     private void goToHome() {
@@ -320,15 +373,15 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void storeRunDays() {
-        List<String> days = runWeekdaysPicker.getSelectedDaysText();
-        Log.i(TAG, days.toString().replace("[","").replace("]", ""));
-        personalModelSharedPrefs.setStartTimeOfRuns(days.toString().replace("[","").replace("]", ""));
+        List<Integer> days = runWeekdaysPicker.getSelectedDays();
+//        Log.i(TAG, days.toString().replace("[","").replace("]", ""));
+        personalModelSharedPrefs.setDaysOfRuns(days.toString().replace("[","").replace("]", ""));
     }
 
     private void storeWalkDays() {
-        List<String> days = walkWeekdaysPicker.getSelectedDaysText();
-        Log.i(TAG, days.toString());
-        personalModelSharedPrefs.setStartTimeOfWalks(days.toString().replace("[","").replace("]", ""));
+        List<Integer> days = walkWeekdaysPicker.getSelectedDays();
+//        Log.i(TAG, days.toString());
+        personalModelSharedPrefs.setDaysOfWalks(days.toString().replace("[","").replace("]", ""));
     }
 
 }
