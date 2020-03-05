@@ -22,9 +22,9 @@ public class BuildModelReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "BUILD MODEL called ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "BUILD MODEL RECEIVER called ", Toast.LENGTH_SHORT).show();
         Calendar now = Calendar.getInstance();
-        Log.i(TAG, "BUILD MODEL RECEIVE CALLED " + now.getTime().toString());
+        Log.i(TAG, "BUILD MODEL RECEIVER CALLED " + now.getTime().toString());
 
         Intent serviceIntent = new Intent(context, BuildModelService.class);
         BuildModelService.enqueueWork(context,serviceIntent);

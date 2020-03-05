@@ -12,8 +12,8 @@ import java.util.Calendar;
 
 public class DeviceBootReceiver extends BroadcastReceiver {
 
-    PendingIntent alarmIntent;
-    AlarmManager alarmManager;
+    public static PendingIntent alarmIntent;
+    public static AlarmManager alarmManager;
 
     public DeviceBootReceiver() {
         super();
@@ -35,8 +35,14 @@ public class DeviceBootReceiver extends BroadcastReceiver {
             alarmIntent = PendingIntent.getBroadcast(context, 0, receiverIntent, 0);
         }
 
-//        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTime().getTime(), 6000, alarmIntent);
-//        Toast.makeText(context, "ALARM SET in device boot receiver", Toast.LENGTH_SHORT).show();
-//        Log.i("device boot receiver", "set alarm");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        Log.i("device boot receiver ", calendar.getTime().toString());
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 6000, alarmIntent);
+        Toast.makeText(context, "ALARM SET in device boot receiver", Toast.LENGTH_SHORT).show();
+        Log.i("device boot receiver", "set alarm");
     }
 }
