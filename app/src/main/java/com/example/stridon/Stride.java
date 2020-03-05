@@ -16,24 +16,58 @@ public class Stride implements Parcelable {
         }
     };
 
-    private double distance;
-    private String strideType;
-    private boolean favorited;
+    private double startLat;
+    private double startLong;
     private String encodedPolyline;
+    private double distance; // miles
+    private int duration; // minutes
+    private String strideType;
+    private double degrees; // fahrenheit
+    private String day;
+    private long time;
+    private boolean favorited;
 
-    public Stride(double distance, String strideType, String encodedPolyline) {
-        this.distance = distance;
-        this.strideType = strideType;
-        this.favorited = false;
+    public Stride(double startLat, double startLong, String encodedPolyline, double distance, int duration, String strideType, double degrees, String day, long time) {
+        this.startLat = startLat;
+        this.startLong = startLong;
         this.encodedPolyline = encodedPolyline;
+        this.distance = distance;
+        this.duration = duration;
+        this.strideType = strideType;
+        this.degrees = degrees;
+        this.day = day;
+        this.time = time;
+        this.favorited = false;
     }
 
     public Stride(Parcel p){
+        this.startLat = p.readDouble();
+        this.startLong = p.readDouble();
+        this.encodedPolyline = p.readString();
         this.distance = p.readDouble();
+        this.duration = p.readInt();
         this.strideType = p.readString();
+        this.degrees = p.readDouble();
+        this.day = p.readString();
+        this.time = p.readLong();
         String bool = p.readString();
         this.favorited = Boolean.getBoolean(bool);
-        this.encodedPolyline = p.readString();
+    }
+
+    public double getStartLat() {
+        return startLat;
+    }
+
+    public void setStartLat(double startLat) {
+        this.startLat = startLat;
+    }
+
+    public double getStartLong() {
+        return startLong;
+    }
+
+    public void setStartLong(double startLong) {
+        this.startLong = startLong;
     }
 
     public String getEncodedPolyline() {
@@ -52,12 +86,44 @@ public class Stride implements Parcelable {
         this.distance = distance;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
     public String getStrideType() {
         return strideType;
     }
 
     public void setStrideType(String strideType) {
         this.strideType = strideType;
+    }
+
+    public double getDegrees() {
+        return degrees;
+    }
+
+    public void setDegrees(double degrees) {
+        this.degrees = degrees;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
     }
 
     public boolean isFavorited() {
@@ -75,10 +141,16 @@ public class Stride implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeDouble(distance);
-        dest.writeString(strideType);
-        dest.writeString(String.valueOf(favorited));
+        dest.writeDouble(startLat);
+        dest.writeDouble(startLong);
         dest.writeString(encodedPolyline);
+        dest.writeDouble(distance);
+        dest.writeInt(duration);
+        dest.writeString(strideType);
+        dest.writeDouble(degrees);
+        dest.writeString(day);
+        dest.writeLong(time);
+        dest.writeString(String.valueOf(favorited));
     }
 
     @NonNull

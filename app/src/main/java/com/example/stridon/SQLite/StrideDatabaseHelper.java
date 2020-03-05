@@ -19,17 +19,15 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_STRIDE_TABLE =
             "CREATE TABLE " + StrideColumns.STRIDE_TABLE_NAME + " (" +
                     StrideColumns._ID + " INTEGER PRIMARY KEY NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LAT1 + " DOUBLE(2,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LONG1 + " DOUBLE(3,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LAT2 + " DOUBLE(2,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LONG2 + " DOUBLE(3,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LAT3 + " DOUBLE(2,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LONG3 + " DOUBLE(3,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LAT4 + " DOUBLE(2,6) NOT NULL," +
-//                    StrideColumns.STRIDE_COLUMN_LONG4 + " DOUBLE(3,6) NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_START_LAT + " DOUBLE(2,6) NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_START_LONG + " DOUBLE(3,6) NOT NULL," +
                     StrideColumns.STRIDE_COLUMN_ENCODED_POLYLINE + " VARCHAR(100000) NOT NULL," +
-                    StrideColumns.STRIDE_COLUMN_DISTANCE + " INTEGER NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_DISTANCE + " DOUBLE(3,10)  NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_DURATION + " INTEGER NOT NULL," +
                     StrideColumns.STRIDE_COLUMN_STRIDE_TYPE + " TEXT NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_DEGREES + " DOUBLE(3,2) NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_DAY + " VARCHAR(10) NOT NULL," +
+                    StrideColumns.STRIDE_COLUMN_TIME + " INTEGER NOT NULL," +
                     StrideColumns.STRIDE_COLUMN_FAVORITED + " BIT NOT NULL)";
 
     /*
@@ -78,17 +76,15 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
             db.beginTransaction();
             try {
                 ContentValues values = new ContentValues();
-//                values.put(StrideColumns.STRIDE_COLUMN_LAT1, stride.getLat1());
-//                values.put(StrideColumns.STRIDE_COLUMN_LONG1, stride.getLong1());
-//                values.put(StrideColumns.STRIDE_COLUMN_LAT2, stride.getLat2());
-//                values.put(StrideColumns.STRIDE_COLUMN_LONG2, stride.getLong2());
-//                values.put(StrideColumns.STRIDE_COLUMN_LAT3, stride.getLat3());
-//                values.put(StrideColumns.STRIDE_COLUMN_LONG3, stride.getLat3());
-//                values.put(StrideColumns.STRIDE_COLUMN_LAT4, stride.getLat4());
-//                values.put(StrideColumns.STRIDE_COLUMN_LONG4, stride.getLong4());
+                values.put(StrideColumns.STRIDE_COLUMN_START_LAT, stride.getStartLat());
+                values.put(StrideColumns.STRIDE_COLUMN_START_LONG, stride.getStartLong());
                 values.put(StrideColumns.STRIDE_COLUMN_ENCODED_POLYLINE, stride.getEncodedPolyline());
                 values.put(StrideColumns.STRIDE_COLUMN_DISTANCE, stride.getDistance());
+                values.put(StrideColumns.STRIDE_COLUMN_DURATION, stride.getDuration());
                 values.put(StrideColumns.STRIDE_COLUMN_STRIDE_TYPE, stride.getStrideType());
+                values.put(StrideColumns.STRIDE_COLUMN_DEGREES, stride.getDegrees());
+                values.put(StrideColumns.STRIDE_COLUMN_DAY, stride.getDay());
+                values.put(StrideColumns.STRIDE_COLUMN_TIME, stride.getTime());
                 values.put(StrideColumns.STRIDE_COLUMN_FAVORITED, stride.isFavorited());
 
                 long newRowId = db.insert(StrideColumns.STRIDE_TABLE_NAME, null, values);

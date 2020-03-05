@@ -366,7 +366,8 @@ public class HomeActivity extends AppCompatActivity
                             actualDistance = Math.round(actualDistance * 100.0) / 100.0;
                             System.out.println("actualDistance: " + actualDistance);
 
-                            Stride newStride = new Stride(actualDistance, "Run", encoded_line);
+                            // TODO update with actual values in Stride
+                            Stride newStride = new Stride(0, 0, encoded_line, actualDistance, 0, "Run", 0, "monday", 0);
                             strideList.add(newStride);
 
                             //draw the initial line
@@ -452,9 +453,8 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void storeStride() {
+        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "monday", 0);
 
-        Stride stride = new Stride(1, "run",
-                "encoded polyline");
         StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
         storeStrideTask.execute(stride);
     }
@@ -503,7 +503,7 @@ public class HomeActivity extends AppCompatActivity
 
                     temp_today = t; // in Fahrenheit
                     if (temp_today != 0)
-                        weatherTextView.setText((int)temp_today + " °F");
+                        weatherTextView.setText((int) temp_today + " °F");
                     else
                         weatherTextView.setText("");
                 } catch (JSONException e) {
