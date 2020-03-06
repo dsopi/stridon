@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class BuildModelService extends JobIntentService {
@@ -26,5 +27,26 @@ public class BuildModelService extends JobIntentService {
 
     public static void enqueueWork(Context ctx, Intent intent) {
         enqueueWork(ctx, BuildModelService.class, JOB_ID, intent);
+    }
+
+    /*
+        returns list of bad weather interval start time
+     */
+    public ArrayList<Long> getWeather() {
+        return null;
+    }
+
+    /*
+        based on free time from calendar and good weather intervals, return times where user can run
+     */
+    public ArrayList<ArrayList<Long>> getIntervals() {
+        return null;
+    }
+
+    /*
+        for each interval of free time, set an alarm to notify user
+     */
+    public void setAlarms() {
+
     }
 }

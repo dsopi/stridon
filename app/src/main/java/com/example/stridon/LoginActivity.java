@@ -94,6 +94,9 @@ public class LoginActivity extends AppCompatActivity {
             Log.i(TAG, "signed in!");
             account = completedTask.getResult(ApiException.class);
             Log.i(TAG, "calling to go settings");
+
+            // todo ask for calendar and location permissions and THEN call go to settings
+
             goToSettings();
         } catch (ApiException e) {
             Log.i(TAG, "signInResult:failed code=" + e.getStatusCode());
