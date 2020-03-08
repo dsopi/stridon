@@ -38,6 +38,7 @@ public class BuildModelService extends JobIntentService {
 
     /*
         based on free time from calendar and good weather intervals, return times where user can run
+        store these times in sharedprefs
      */
     public ArrayList<ArrayList<Long>> getIntervals() {
         return null;

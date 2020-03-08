@@ -540,4 +540,33 @@ public class HomeActivity extends AppCompatActivity
             notificationManager.createNotificationChannel(channel);
         }
     }
+
+    private void getRecommendations(){
+        // get numbers of steps taken that day          // get move distance for that day (miles)
+        // get location
+        // get height, weight, age, and recommended numbers of steps per day    // change this to recommended distance per day (miles)
+        // which Stride you prefer that day
+        // average duration and distance for that type of Stride
+        // time since last Stride
+
+        // first determine type of Stride
+        // based on current day, you determine type of Stride, but
+        // if the user has already taken a run Stride, is already above the recommended step count, the Stride recommmended should be a walk
+        // whichever Stride is dominant for this recommendation, we should still give some options for the other type of Stride
+
+        // get duration for that Stride
+        // based on current interval time, determine how long this Stride could potentially be
+        // if interval time is < avg duration, base distance on interval time duration
+        // else base distance on avg duration for that type of Stride
+
+        // get distance for that Stride
+        // get average speed for that user, and use it and duration to calculate distance
+        // multiply distance by 1.1 if user has gone on a Stride
+        // based on the days they usually go on that Stride, if they didn't go on that Stride the last day, then
+        // multiply distance by 1-(0.02)
+
+        // get distance for the other type of Stride by the same calculations
+
+        // return distance for that Stride and other Stride
+    }
 }
