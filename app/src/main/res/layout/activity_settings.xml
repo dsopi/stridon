@@ -37,6 +37,26 @@
             android:hint="Age"
             android:inputType="number"></EditText>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Run Days"></TextView>
+
+        <com.dpro.widgets.WeekdaysPicker
+            android:id="@+id/daysOfRuns"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Walk Days"></TextView>
+
+        <com.dpro.widgets.WeekdaysPicker
+            android:id="@+id/daysOfWalks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
         <LinearLayout
             android:id="@+id/runLinearLayout"
             android:layout_width="wrap_content"
@@ -124,25 +144,6 @@
             android:background="@color/Button"
             android:text="finish"></Button>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Run Days"></TextView>
-
-        <com.dpro.widgets.WeekdaysPicker
-            android:id="@+id/daysOfRuns"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Walk Days"></TextView>
-
-        <com.dpro.widgets.WeekdaysPicker
-            android:id="@+id/daysOfWalks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
