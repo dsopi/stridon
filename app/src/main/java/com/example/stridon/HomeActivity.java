@@ -146,6 +146,8 @@ public class HomeActivity extends AppCompatActivity
         transaction.commit();
 
         createNotificationChannel();
+
+
     }
 
     @Override

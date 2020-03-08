@@ -1,11 +1,13 @@
 package com.example.stridon;
 
+import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -81,6 +83,7 @@ public class StrideActivity extends AppCompatActivity
 
     private GoogleSignInAccount account;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -122,6 +125,8 @@ public class StrideActivity extends AppCompatActivity
                 finish();
             }
         });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
@@ -337,5 +342,20 @@ public class StrideActivity extends AppCompatActivity
         super.onDestroy();
 
         // TODO remove listeners
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+
+                Intent myIntent = new Intent(getApplicationContext(), HomeActivity.class);
+                startActivityForResult(myIntent, 0);
+
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

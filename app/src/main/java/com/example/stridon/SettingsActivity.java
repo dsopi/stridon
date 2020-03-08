@@ -192,7 +192,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("distance of runs in miles");
             et.setId(R.id.distanceOfRuns);
-            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            et.setInputType(InputType.TYPE_CLASS_NUMBER);
             ll.addView(et);
         }
 
@@ -266,7 +266,7 @@ public class SettingsActivity extends AppCompatActivity {
             et.setLayoutParams(p);
             et.setHint("distance of walks in miles");
             et.setId(R.id.distanceOfWalks);
-            et.setInputType(InputType.TYPE_NUMBER_FLAG_DECIMAL);
+            et.setInputType(InputType.TYPE_CLASS_NUMBER);
             ll.addView(et);
         }
 

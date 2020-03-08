@@ -55,7 +55,7 @@ public class StrideResultActivity extends AppCompatActivity {
         float rawMinutes = rawSeconds / 60;
         float pace = distance / rawMinutes;
 
-        paceView.setText("Pace: " +  pace + "meters/min");
+        paceView.setText("Pace: " +  pace + " meters/min");
     }
 
     private void goToHome() {
