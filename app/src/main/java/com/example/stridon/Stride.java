@@ -40,7 +40,7 @@ public class Stride implements Parcelable {
         this.favorited = false;
     }
 
-    public Stride(Parcel p){
+    public Stride(Parcel p) {
         this.startLat = p.readDouble();
         this.startLong = p.readDouble();
         this.encodedPolyline = p.readString();
@@ -156,7 +156,8 @@ public class Stride implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        String s = "Stride: " + strideType + " distance: " + distance + " polyline: " + encodedPolyline;
+        String s = String.format("(startLat: %f, startLong: %f, encodedPolyline: %s, distance: %f, duration: %d, strideType: %s, degrees: %f, day: %s, time: %d)",
+                startLat, startLong, encodedPolyline, distance, duration, strideType, degrees, day, time);
         return s;
     }
 }

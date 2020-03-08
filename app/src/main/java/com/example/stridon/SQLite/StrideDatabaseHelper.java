@@ -2,12 +2,17 @@ package com.example.stridon.SQLite;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.stridon.Stride;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StrideDatabaseHelper extends SQLiteOpenHelper {
 
@@ -28,7 +33,7 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
                     StrideColumns.STRIDE_COLUMN_DEGREES + " DOUBLE(3,2) NOT NULL," +
                     StrideColumns.STRIDE_COLUMN_DAY + " VARCHAR(10) NOT NULL," +
                     StrideColumns.STRIDE_COLUMN_TIME + " INTEGER NOT NULL," +
-                    StrideColumns.STRIDE_COLUMN_FAVORITED + " BIT NOT NULL)";
+                    StrideColumns.STRIDE_COLUMN_FAVORITED + " INTEGER NOT NULL)";
 
     /*
         DEBUG ONLY
@@ -85,7 +90,7 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
                 values.put(StrideColumns.STRIDE_COLUMN_DEGREES, stride.getDegrees());
                 values.put(StrideColumns.STRIDE_COLUMN_DAY, stride.getDay());
                 values.put(StrideColumns.STRIDE_COLUMN_TIME, stride.getTime());
-                values.put(StrideColumns.STRIDE_COLUMN_FAVORITED, stride.isFavorited());
+                values.put(StrideColumns.STRIDE_COLUMN_FAVORITED, stride.isFavorited() ? 1 : 0);
 
                 long newRowId = db.insert(StrideColumns.STRIDE_TABLE_NAME, null, values);
                 db.setTransactionSuccessful();
@@ -100,15 +105,66 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-
             super.onPostExecute(aVoid);
         }
     }
 
-    public static class GetAllStrides extends AsyncTask<Stride, Void, Void> {
+
+    public static class GetLast10Strides extends AsyncTask<Void, Void, List<Stride>> {
+        private StrideDatabaseHelper strideDatabaseHelper;
+
+        public GetLast10Strides(StrideDatabaseHelper strideDatabaseHelper) {
+            this.strideDatabaseHelper = strideDatabaseHelper;
+        }
+
         @Override
-        protected Void doInBackground(Stride... strides) {
-            return null;
+        protected List<Stride> doInBackground(Void... voids) {
+            SQLiteDatabase db = strideDatabaseHelper.getReadableDatabase();
+
+//            String whereClause = "";
+//            String[] selectionArgs = new String[]{};
+            String orderBy = StrideColumns.STRIDE_COLUMN_TIME + " DESC ";
+
+            Cursor cursor = db.query(StrideColumns.STRIDE_TABLE_NAME, null, null, null, null, null, orderBy, "10");
+            ArrayList<Stride> strides = new ArrayList<>();
+            try {
+                if (cursor.moveToFirst()) {
+                    do {
+                        double startLat = cursor.getDouble(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_START_LAT));
+                        double startLong = cursor.getDouble(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_START_LONG));
+                        String encodedPolyline = cursor.getString(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_ENCODED_POLYLINE));
+                        double distance = cursor.getDouble(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_DISTANCE));
+                        int duration = cursor.getInt(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_DURATION));
+                        String strideType = cursor.getString(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_STRIDE_TYPE));
+                        double degrees = cursor.getDouble(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_DEGREES));
+                        String day = cursor.getString(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_DAY));
+                        long time = cursor.getLong(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_TIME));
+//                        boolean favorited = false;
+//                        if (cursor.getInt(cursor.getColumnIndex(StrideColumns.STRIDE_COLUMN_FAVORITED)) == 1)
+//                            favorited = true;
+
+
+                        Stride stride = new Stride(startLat, startLong, encodedPolyline, distance, duration, strideType, degrees, day, time);
+                        Log.i(TAG, stride.toString());
+                        strides.add(stride);
+                    } while (cursor.moveToNext());
+                }
+            } catch (Exception e) {
+                Log.i(TAG, "Error while trying to get Strides from database");
+                Log.i(TAG, e.toString());
+            } finally {
+                if (cursor != null && !cursor.isClosed()) {
+                    cursor.close();
+                }
+            }
+            return strides;
+        }
+
+        @Override
+        protected void onPostExecute(List<Stride> strides) {
+            super.onPostExecute(strides);
+            Log.i(TAG, "retrieved strides");
+            Log.i(TAG, strides.toString());
         }
     }
 }

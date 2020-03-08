@@ -13,7 +13,7 @@ public final class StrideColumns implements BaseColumns {
     public static final String STRIDE_COLUMN_STRIDE_TYPE = "stride_type";
     public static final String STRIDE_COLUMN_DEGREES = "degrees";
     public static final String STRIDE_COLUMN_DAY = "day";
-    public static final String STRIDE_COLUMN_TIME = "TIME";
+    public static final String STRIDE_COLUMN_TIME = "time";
     public static final String STRIDE_COLUMN_FAVORITED = "favorited";
     // TODO any other attributes of a Stride, possibly elevation information
 }

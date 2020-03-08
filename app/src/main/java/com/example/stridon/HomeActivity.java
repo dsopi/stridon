@@ -52,6 +52,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
@@ -453,14 +454,15 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void storeStride() {
-        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "monday", 0);
+        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "monday", Calendar.getInstance().getTimeInMillis());
 
         StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
         storeStrideTask.execute(stride);
     }
 
     private void retrieveStride() {
-
+        StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper);
+        getLast10Strides.execute();
     }
 
 
@@ -541,7 +543,7 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    private void getRecommendations(){
+    private void getRecommendations() {
         // get numbers of steps taken that day          // get move distance for that day (miles)
         // get location
         // get height, weight, age, and recommended numbers of steps per day    // change this to recommended distance per day (miles)
