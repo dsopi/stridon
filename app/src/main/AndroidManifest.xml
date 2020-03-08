@@ -5,7 +5,7 @@
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".StridonApplication"
@@ -19,11 +19,13 @@
         <receiver
             android:name=".BuildModelReceiver"
             android:process=":remote"></receiver>
-
+        <receiver
+            android:name=".NotifyUserReceiver"
+            android:process=":remote"></receiver>
         <receiver
             android:name=".DeviceBootReceiver"
-            android:exported="true"
-            android:enabled="false">
+            android:enabled="false"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
