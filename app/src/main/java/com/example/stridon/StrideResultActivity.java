@@ -2,19 +2,25 @@ package com.example.stridon;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.stridon.SQLite.StrideDatabaseHelper;
+
 public class StrideResultActivity extends AppCompatActivity {
 
+    private static final String TAG = "strideresultactivity";
     private TextView stepsView;
     private TextView distanceView;
     private TextView paceView;
     private TextView timeView;
     private Button homeButton;
+
+    private Stride stride;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +32,7 @@ public class StrideResultActivity extends AppCompatActivity {
         long totalTime = intent.getLongExtra("totalTime",0);
         int stepCount = intent.getIntExtra("stepCount",0);
         float distance = intent.getFloatExtra("distance",0);
+        stride = intent.getParcelableExtra("stride");
 
         stepsView = findViewById(R.id.stepsView);
         timeView = findViewById(R.id.timeView);
@@ -56,6 +63,17 @@ public class StrideResultActivity extends AppCompatActivity {
         float pace = distance / rawMinutes;
 
         paceView.setText("Pace: " +  pace + " meters/min");
+
+        stride.setDistance(distance);
+        stride.setDuration((int)minutes);
+
+        saveStride();
+    }
+
+    private void saveStride(){
+        Log.i(TAG, "save stride " + stride.toString());
+        StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(StrideDatabaseHelper.getInstance(this));
+        storeStrideTask.execute(stride);
     }
 
     private void goToHome() {

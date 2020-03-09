@@ -382,7 +382,7 @@ public class HomeActivity extends AppCompatActivity
                             System.out.println("actualDistance: " + actualDistance);
 
                             // TODO update with actual values in Stride
-                            Stride newStride = new Stride(0, 0, encoded_line, actualDistance, 0, "Run", 0, "monday", 0);
+                            Stride newStride = new Stride(0, 0, encoded_line, actualDistance, 0, "Run", 0, "Monday", 0);
                             strideList.add(newStride);
 
                             //draw the initial line
@@ -461,7 +461,8 @@ public class HomeActivity extends AppCompatActivity
     private void goToStride(Stride stride) {
         Intent strideIntent = new Intent(this, StrideActivity.class);
 
-        strideIntent.putExtra("ENCODED", stride.getEncodedPolyline());
+        strideIntent.putExtra("stride", stride);
+//        strideIntent.putExtra("ENCODED", stride.getEncodedPolyline());
 
         Log.i(TAG, "go to Stride intent");
         startActivity(strideIntent);

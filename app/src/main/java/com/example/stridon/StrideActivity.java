@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.PolyUtil;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,6 +84,7 @@ public class StrideActivity extends AppCompatActivity
 
     private GoogleSignInAccount account;
 
+    private Stride stride;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +162,9 @@ public class StrideActivity extends AppCompatActivity
 
         Intent intent = getIntent();
 
-        String encoded = intent.getStringExtra("ENCODED");
+        stride = intent.getParcelableExtra("stride");
+//        String encoded = intent.getStringExtra("ENCODED");
+        String encoded = stride.getEncodedPolyline();
         System.out.println("ENCODED: " + encoded);
         List<LatLng> points = PolyUtil.decode(encoded);
         Polyline trail = mMap.addPolyline(new PolylineOptions()
@@ -257,6 +261,9 @@ public class StrideActivity extends AppCompatActivity
     }
 
     public void start() {
+        Calendar c = Calendar.getInstance();
+        stride.setTime(c.getTimeInMillis());
+
         stopwatch.start();
         stopwatch.setBase(SystemClock.elapsedRealtime());
         updateTimer = SystemClock.elapsedRealtime();
@@ -333,6 +340,7 @@ public class StrideActivity extends AppCompatActivity
         resultsIntent.putExtra("stepCount", stepCount);
         resultsIntent.putExtra("distance", distance);
         resultsIntent.putExtra("totalTime", totalTime);
+        resultsIntent.putExtra("stride", stride);
         resultsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivity(resultsIntent);
     }
