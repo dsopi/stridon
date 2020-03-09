@@ -42,8 +42,11 @@ public class DeviceBootReceiver extends BroadcastReceiver {
         calendar.set(Calendar.SECOND, 59);
         Log.i("device boot receiver ", calendar.getTime().toString());
 
+        // for debugging
+//        calendar = Calendar.getInstance();
+//        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis() + 5000, alarmIntent);
 
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 6000, alarmIntent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 24*60*60*1000, alarmIntent);
         Toast.makeText(context, "ALARM SET in device boot receiver", Toast.LENGTH_SHORT).show();
         Log.i("device boot receiver", "set alarm");
 

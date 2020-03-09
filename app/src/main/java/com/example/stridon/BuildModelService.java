@@ -32,10 +32,11 @@ public class BuildModelService extends JobIntentService {
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
 
+//        // change this to actual intervals
 //        ArrayList<ArrayList<Long>> intervals = new ArrayList<>();
-//        for (int i = 0; i < 2; i++) {
+//        for (int i = 0; i < 1; i++) {
 //            ArrayList<Long> in = new ArrayList<>();
-//            in.add(new Long(1));
+//            in.add(Calendar.getInstance().getTimeInMillis() + 3000);
 //            intervals.add(in);
 //        }
 //        setAlarms(intervals);

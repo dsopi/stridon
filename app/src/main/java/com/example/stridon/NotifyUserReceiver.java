@@ -1,5 +1,6 @@
 package com.example.stridon;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -24,12 +25,16 @@ public class NotifyUserReceiver extends BroadcastReceiver {
     }
 
     private synchronized void pushNotification(Context context) {
+        Intent intent = new Intent(context, HomeActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, HomeActivity.NOTIF_CHANNEL_ID)
                 .setContentTitle("time for a stride")
                 .setContentText("content").setSmallIcon(R.drawable.ic_launcher_foreground).
                         setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText("Much longer text that cannot fit one line...iadjfksmljndkleojh  fdhjcksxa g tg gt g gt gtf  gtfrf g gtr gt rgt rgtr gt g tg tr gr g g g gt gt gt g gt g g"))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setAutoCancel(true);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT).setVisibility(NotificationCompat.VISIBILITY_PUBLIC).setAutoCancel(true)
+                .setContentIntent(pendingIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
 
