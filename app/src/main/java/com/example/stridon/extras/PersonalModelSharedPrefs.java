@@ -6,26 +6,27 @@ import android.content.SharedPreferences;
 public class PersonalModelSharedPrefs {
 
     private static String personalModelFile = "personal_model";
+
+    // the following attributes are set in the settings page at the start of the app
     private static final String height = "height"; // centimeters
     private static final String weight = "weight"; // pounds
     private static final String age = "age"; // years
     // type of Stride doesn't have to be explicitly stored
-//    private static final String totalRunSrides = "totalRunSrides";
-//    private static final String totalWalkStrides = "totalWalkStrides";
 
     private static final String daysOfRuns = "daysOfRuns"; // string of days seperated by commas
     private static final String durationOfRuns = "durationOfRuns"; // minutes
-//    private static final String startTimeOfRuns = "startTimeOfRuns";
+    //    private static final String startTimeOfRuns = "startTimeOfRuns";
 //    private static final String avgSpeedOfRuns = "avgSpeedOfRuns"; // miles per hour
     private static final String distanceOfRuns = "distanceOfRuns";
     private static final String daysOfWalks = "daysOfWalks";
     private static final String durationOfWalks = "durationOfWalks"; // minutes
-//    private static final String startTimeOfWalks = "startTimeOfWalks";
+    //    private static final String startTimeOfWalks = "startTimeOfWalks";
 //    private static final String avgSpeedOfWalks = "avgSpeedOfWalks"; // miles per hour
     private static final String distanceOfWalks = "distanceOfWalks";
 
     private static final String numStepsTakenThisDay = "numStepsTakenThisDay";
-    private static final String avgNumStepsTakenPerDay = "avgNumStepsTakenPerDay";
+    private static final String avgNumStepsTakenPerDay = "avgNumStepsTakenPerDay"; // todo how to keep track of this
+    private static final String lastStrideTime = "lastStrideTime";
 
     private static PersonalModelSharedPrefs personalModelSharedPrefs;
 
@@ -93,12 +94,12 @@ public class PersonalModelSharedPrefs {
 //        return prefs.getInt(numRunsPerWeek, -1);
 //    }
 
-    public void setDaysOfRuns(String userDaysOfRuns){
+    public void setDaysOfRuns(String userDaysOfRuns) {
         editor.putString(daysOfRuns, userDaysOfRuns).apply();
     }
 
-    public String getDaysOfRuns(){
-        return prefs.getString(daysOfRuns,"");
+    public String getDaysOfRuns() {
+        return prefs.getString(daysOfRuns, "");
     }
 
     public void setDurationOfRuns(int userDurationOfRuns) {
@@ -109,12 +110,12 @@ public class PersonalModelSharedPrefs {
         return prefs.getInt(durationOfRuns, -1);
     }
 
-    public void setDistanceOfRuns(float userDistanceOfRuns){
+    public void setDistanceOfRuns(float userDistanceOfRuns) {
         editor.putFloat(distanceOfRuns, userDistanceOfRuns).apply();
     }
 
-    public float getDistanceOfRuns(){
-        return prefs.getFloat(distanceOfRuns,-1);
+    public float getDistanceOfRuns() {
+        return prefs.getFloat(distanceOfRuns, -1);
     }
 
 //    // TODO how to store time?
@@ -143,12 +144,12 @@ public class PersonalModelSharedPrefs {
 //        return prefs.getInt(numWalksPerWeek, -1);
 //    }
 
-    public void setDaysOfWalks(String userDaysOfWalks){
+    public void setDaysOfWalks(String userDaysOfWalks) {
         editor.putString(daysOfWalks, userDaysOfWalks).apply();
     }
 
-    public String getDaysOfWalks(){
-        return prefs.getString(daysOfWalks,"");
+    public String getDaysOfWalks() {
+        return prefs.getString(daysOfWalks, "");
     }
 
     public void setDurationOfWalks(int userDurationOfWalks) {
@@ -159,12 +160,12 @@ public class PersonalModelSharedPrefs {
         return prefs.getInt(durationOfWalks, -1);
     }
 
-    public void setDistanceOfWalks(float userDistanceOfWalks){
+    public void setDistanceOfWalks(float userDistanceOfWalks) {
         editor.putFloat(distanceOfWalks, userDistanceOfWalks).apply();
     }
 
-    public float getDistanceOfWalks(){
-        return prefs.getFloat(distanceOfWalks,-1);
+    public float getDistanceOfWalks() {
+        return prefs.getFloat(distanceOfWalks, -1);
     }
 
 //    // TODO how to store time?
@@ -202,4 +203,11 @@ public class PersonalModelSharedPrefs {
         return prefs.getInt(avgNumStepsTakenPerDay, -1);
     }
 
+    public void setLastStrideTime(long userLastStrideTime) {
+        editor.putLong(lastStrideTime, userLastStrideTime).apply();
+    }
+
+    public long getLastStrideTime() {
+        return prefs.getLong(lastStrideTime, -1);
+    }
 }

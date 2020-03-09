@@ -10,7 +10,6 @@ import android.util.Log;
 
 import com.example.stridon.Stride;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,8 +112,15 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
     public static class GetLast10Strides extends AsyncTask<Void, Void, List<Stride>> {
         private StrideDatabaseHelper strideDatabaseHelper;
 
-        public GetLast10Strides(StrideDatabaseHelper strideDatabaseHelper) {
+        public interface GetLast10StridesListener {
+            void onStridesReceived(List<Stride> strides);
+        }
+
+        private GetLast10StridesListener callback;
+
+        public GetLast10Strides(StrideDatabaseHelper strideDatabaseHelper, GetLast10StridesListener callback) {
             this.strideDatabaseHelper = strideDatabaseHelper;
+            this.callback = callback;
         }
 
         @Override
@@ -165,6 +171,10 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
             super.onPostExecute(strides);
             Log.i(TAG, "retrieved strides");
             Log.i(TAG, strides.toString());
+
+            if (callback != null) {
+                callback.onStridesReceived(strides);
+            }
         }
     }
 }

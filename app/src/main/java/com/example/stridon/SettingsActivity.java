@@ -110,6 +110,8 @@ public class SettingsActivity extends AppCompatActivity {
                 days.add(Integer.valueOf(i));
             }
             runWeekdaysPicker.setSelectedDays(days);
+        } else {
+            runWeekdaysPicker.setSelectedDays(new ArrayList<Integer>());
         }
 
         if (personalModelSharedPrefs.getDurationOfRuns() != -1){
@@ -130,6 +132,8 @@ public class SettingsActivity extends AppCompatActivity {
                 days.add(Integer.valueOf(i));
             }
             walkWeekdaysPicker.setSelectedDays(days);
+        } else {
+            walkWeekdaysPicker.setSelectedDays(new ArrayList<Integer>());
         }
 
         if (personalModelSharedPrefs.getDurationOfWalks() != -1){

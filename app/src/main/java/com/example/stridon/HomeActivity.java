@@ -14,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.JobIntentService;
@@ -31,6 +33,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.stridon.SQLite.StrideDatabaseHelper;
 import com.example.stridon.extras.MyGoogleOptions;
+import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -53,7 +56,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity
         implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
@@ -64,6 +72,7 @@ public class HomeActivity extends AppCompatActivity
     private GoogleSignInClient mGoogleSignInClient;
 
     private FragmentManager fragmentManager = getSupportFragmentManager();
+    private PersonalModelSharedPrefs personalModelSharedPrefs;
 
     //These variables are used to detect
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
@@ -105,6 +114,9 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        personalModelSharedPrefs = PersonalModelSharedPrefs.getInstance(this.getApplicationContext());
+
 
         startStrideButton = findViewById(R.id.startStrideButton);
         weatherTextView = findViewById(R.id.weatherTextView);
@@ -456,14 +468,14 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void storeStride() {
-        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "monday", Calendar.getInstance().getTimeInMillis());
+        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "Monday", Calendar.getInstance().getTimeInMillis());
 
         StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
         storeStrideTask.execute(stride);
     }
 
     private void retrieveStride() {
-        StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper);
+        StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, null);
         getLast10Strides.execute();
     }
 
@@ -525,8 +537,71 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void buildModel() {
-        Intent serviceIntent = new Intent(this, BuildModelService.class);
-        BuildModelService.enqueueWork(this, serviceIntent);
+//        Intent serviceIntent = new Intent(this, BuildModelService.class);
+//        BuildModelService.enqueueWork(this, serviceIntent);
+        // todo build model should get intervals before generating recommendations
+
+        StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, new StrideDatabaseHelper.GetLast10Strides.GetLast10StridesListener() {
+            @Override
+            public void onStridesReceived(List<Stride> strides) {
+                calculateModel(strides);
+            }
+        });
+        getLast10Strides.execute();
+
+    }
+
+    private void calculateModel(List<Stride> strides) {
+        HashMap<String, Integer> weekdayMap = new HashMap<>();
+        weekdayMap.put("Sunday", 1);
+        weekdayMap.put("Monday", 2);
+        weekdayMap.put("Tuesday", 3);
+        weekdayMap.put("Wednesday", 4);
+        weekdayMap.put("Thursday", 5);
+        weekdayMap.put("Friday", 6);
+        weekdayMap.put("Saturday", 7);
+
+        if (strides.size() < 10) {
+            // todo
+            // if not enough strides, base on user settings
+
+        } else {
+            HashSet<Integer> walkDays = new HashSet<>();
+            HashSet<Integer> runDays = new HashSet<>();
+
+            double runDistance = 0;
+            double walkDistance = 0;
+            int runDuration = 0;
+            int walkDuration = 0;
+            long lastStrideTime = strides.get(0).getTime();
+
+            for (int i = 0; i < strides.size(); i++) {
+                Stride s = strides.get(i);
+                if (s.getStrideType().equals("Run")) {
+                    runDays.add(weekdayMap.get(s.getDay()));
+                    runDistance = runDistance + s.getDistance();
+                    runDuration = runDuration + s.getDuration();
+                } else {
+                    walkDays.add(weekdayMap.get(s.getDay()));
+                    walkDistance = walkDistance + s.getDistance();
+                    walkDuration = walkDuration + s.getDuration();
+                }
+            }
+
+            double avgRunDistance = runDistance / 10;
+            double avgWalkDistance = walkDistance / 10;
+            int avgRunDuration = runDuration / 10;
+            int avgWalkDuration = walkDuration / 10;
+
+
+            personalModelSharedPrefs.setDaysOfRuns((new ArrayList<Integer>(runDays)).toString().replace("[", "").replace("]", ""));
+            personalModelSharedPrefs.setDaysOfWalks((new ArrayList<Integer>(walkDays)).toString().replace("[", "").replace("]", ""));
+            personalModelSharedPrefs.setDistanceOfRuns((float)avgRunDistance);
+            personalModelSharedPrefs.setDistanceOfWalks((float)avgWalkDistance);
+            personalModelSharedPrefs.setDurationOfRuns(avgRunDuration);
+            personalModelSharedPrefs.setDurationOfWalks(avgWalkDuration);
+            personalModelSharedPrefs.setLastStrideTime(lastStrideTime);
+        }
     }
 
     private void createNotificationChannel() {
