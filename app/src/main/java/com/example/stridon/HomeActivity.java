@@ -188,10 +188,6 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "settings");
                 goToSettings();
                 return true;
-            case R.id.logoutOption:
-                Log.i(TAG, "logout");
-                signOut();
-                return true;
             case R.id.storeStride:
                 Log.i(TAG, "store stride");
                 storeStride();
@@ -203,6 +199,10 @@ public class HomeActivity extends AppCompatActivity
             case R.id.buildModel:
                 Log.i(TAG, "build model");
                 buildModel();
+                return true;
+            case R.id.logoutOption:
+                Log.i(TAG, "logout");
+                signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

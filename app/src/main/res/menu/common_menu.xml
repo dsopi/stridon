@@ -3,9 +3,6 @@
     <item
         android:id="@+id/settingsOption"
         android:title="settings" />
-    <item
-        android:id="@+id/logoutOption"
-        android:title="logout" />
 
     <item
         android:id="@+id/storeStride"
@@ -18,4 +15,8 @@
     <item
         android:id="@+id/buildModel"
         android:title="build model" />
+
+    <item
+        android:id="@+id/logoutOption"
+        android:title="logout" />
 </menu>

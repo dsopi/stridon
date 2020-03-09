@@ -23,5 +23,12 @@
         android:layout_gravity="center">
     </com.google.android.gms.common.SignInButton>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/mascot"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"/>
+
 
 </androidx.appcompat.widget.LinearLayoutCompat>
