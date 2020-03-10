@@ -1,7 +1,16 @@
 package com.example.stridon;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import com.example.stridon.extras.MyGoogleOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -10,12 +19,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
-
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -27,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     private static final int RC_SIGN_IN = 1;
+    private static final int MY_CAL_REQ = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,9 @@ public class LoginActivity extends AppCompatActivity {
             Log.i(TAG, "calling to go settings");
 
             // todo ask for calendar and location permissions and THEN call go to settings
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MY_CAL_REQ);
+            }
 
             goToSettings();
         } catch (ApiException e) {
