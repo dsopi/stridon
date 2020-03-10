@@ -1,6 +1,5 @@
 package com.example.stridon;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -111,12 +110,12 @@ public class StrideActivity extends AppCompatActivity
 
         startButton = findViewById(R.id.startButton);
         startButton.setText("Start!");
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start();
-            }
-        });
+            startButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    start();
+                }
+            });
 
         finishButton = findViewById(R.id.finishButton);
         finishButton.setVisibility(View.GONE);
