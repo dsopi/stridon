@@ -59,13 +59,13 @@ public class BuildModelService extends JobIntentService {
 
     public BuildModelService() {
         super();
-        mQueue = Volley.newRequestQueue(this);
         badWeatherTimes = new ArrayList<Long>();
     }
 
     @Override
     protected void onHandleWork(@NonNull Intent intent) {
         Log.i(TAG, "my service is running " + Calendar.getInstance().getTime().getTime());
+        mQueue = Volley.newRequestQueue(this);
 
         alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         // change this to actual intervals
@@ -284,7 +284,7 @@ public class BuildModelService extends JobIntentService {
         while(!freeIntervals.isEmpty()){
             build.add(freeIntervals.remove());
         }
-
+        Log.i(TAG, build.toString());
         return build;
 
     }

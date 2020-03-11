@@ -216,8 +216,11 @@ public class HomeActivity extends AppCompatActivity
         mMap = googleMap;
         mMap.clear();
         getLocationPermission();
-        updateLocationUI();
-        getDeviceLocation();
+        if (mLocationPermissionGranted) {
+            updateLocationUI();
+//            getDeviceLocation();
+        }
+
     }
 
 
@@ -263,6 +266,7 @@ public class HomeActivity extends AppCompatActivity
             if (mLocationPermissionGranted) {
                 mMap.setMyLocationEnabled(true);
                 mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                getDeviceLocation();
             } else {
                 mMap.setMyLocationEnabled(false);
                 mMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -597,8 +601,8 @@ public class HomeActivity extends AppCompatActivity
 
             personalModelSharedPrefs.setDaysOfRuns((new ArrayList<Integer>(runDays)).toString().replace("[", "").replace("]", ""));
             personalModelSharedPrefs.setDaysOfWalks((new ArrayList<Integer>(walkDays)).toString().replace("[", "").replace("]", ""));
-            personalModelSharedPrefs.setDistanceOfRuns((float)avgRunDistance);
-            personalModelSharedPrefs.setDistanceOfWalks((float)avgWalkDistance);
+            personalModelSharedPrefs.setDistanceOfRuns((float) avgRunDistance);
+            personalModelSharedPrefs.setDistanceOfWalks((float) avgWalkDistance);
             personalModelSharedPrefs.setDurationOfRuns(avgRunDuration);
             personalModelSharedPrefs.setDurationOfWalks(avgWalkDuration);
             personalModelSharedPrefs.setLastStrideTime(lastStrideTime);

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -104,7 +105,6 @@ public class LoginActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CALENDAR}, MY_CAL_REQ);
             }
 
-            goToSettings();
         } catch (ApiException e) {
             Log.i(TAG, "signInResult:failed code=" + e.getStatusCode());
         }
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(settingsIntent);
     }
 
-//    private void signOut(){
+    //    private void signOut(){
 //        mGoogleSignInClient.revokeAccess().addOnCompleteListener(new OnCompleteListener<Void>() {
 //            @Override
 //            public void onComplete(@NonNull Task<Void> task) {
@@ -132,5 +132,20 @@ public class LoginActivity extends AppCompatActivity {
 //            }
 //        });
 //    }
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case MY_CAL_REQ: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    goToSettings();
+                } else {
+                    ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CALENDAR}, MY_CAL_REQ);
+                }
+            }
+        }
+    }
 }
