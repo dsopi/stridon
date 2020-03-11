@@ -186,13 +186,13 @@ public class PersonalModelSharedPrefs {
 //        return prefs.getFloat(avgSpeedOfWalks, -1);
 //    }
 
-    public void setNumStepsTakenThisDay(int userSetNumStepsTakenThisDay) {
-        editor.putInt(numStepsTakenThisDay, userSetNumStepsTakenThisDay).apply();
+    public void setNumStepsTakenThisDay(long userSetNumStepsTakenThisDay) {
+        editor.putLong(numStepsTakenThisDay, userSetNumStepsTakenThisDay).apply();
     }
 
     // TODO does this need to be stored? couldn't be queried from google fit API?
-    public int getNumStepsTakenThisDay() {
-        return prefs.getInt(numStepsTakenThisDay, -1);
+    public long getNumStepsTakenThisDay() {
+        return prefs.getLong(numStepsTakenThisDay, -1);
     }
 
     public void setAvgNumStepsTakenPerDay(int userAvgNumStepsTakenPerDay) {

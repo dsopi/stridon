@@ -14,13 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.JobIntentService;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -36,6 +33,10 @@ import com.example.stridon.extras.MyGoogleOptions;
 import com.example.stridon.extras.PersonalModelSharedPrefs;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataSet;
+import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -47,6 +48,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.maps.android.PolyUtil;
 
@@ -56,12 +58,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity
         implements OnMapReadyCallback, StrideRecFragment.StrideRecListener {
@@ -109,6 +108,8 @@ public class HomeActivity extends AppCompatActivity
     private String API_KEY = "4843f8fbd4876cc07f77a0730a5302b1";
     public double temp_today;
     public JsonObjectRequest Weather;
+
+    HashMap<String, Integer> weekdayMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,7 +161,13 @@ public class HomeActivity extends AppCompatActivity
 
         createNotificationChannel();
 
-
+        weekdayMap.put("Sunday", 1);
+        weekdayMap.put("Monday", 2);
+        weekdayMap.put("Tuesday", 3);
+        weekdayMap.put("Wednesday", 4);
+        weekdayMap.put("Thursday", 5);
+        weekdayMap.put("Friday", 6);
+        weekdayMap.put("Saturday", 7);
     }
 
     @Override
@@ -546,6 +553,8 @@ public class HomeActivity extends AppCompatActivity
 //        BuildModelService.enqueueWork(this, serviceIntent);
         // todo build model should get intervals before generating recommendations
 
+        getLocationPermission();
+        getNumberOfStepsTakenToday();
         StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, new StrideDatabaseHelper.GetLast10Strides.GetLast10StridesListener() {
             @Override
             public void onStridesReceived(List<Stride> strides) {
@@ -557,14 +566,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void calculateModel(List<Stride> strides) {
-        HashMap<String, Integer> weekdayMap = new HashMap<>();
-        weekdayMap.put("Sunday", 1);
-        weekdayMap.put("Monday", 2);
-        weekdayMap.put("Tuesday", 3);
-        weekdayMap.put("Wednesday", 4);
-        weekdayMap.put("Thursday", 5);
-        weekdayMap.put("Friday", 6);
-        weekdayMap.put("Saturday", 7);
+
 
         if (strides.size() < 10) {
             // todo
@@ -625,32 +627,93 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
+    /*
+         get numbers of steps taken that day          // get move distance for that day (miles)
+
+         get location
+         get height, weight, age, and recommended numbers of steps per day    // change this to recommended distance per day (miles)
+         which Stride you prefer that day (if it's both, always just prefer to run first then walk)
+         average duration and distance for that type of Stride
+         time since last Stride
+
+         first determine type of Stride
+         based on current day, you determine type of Stride, but
+         if the user has already taken a run Stride, is already above the recommended step count, the Stride recommmended should be a walk
+         whichever Stride is dominant for this recommendation, we should still give some options for the other type of Stride
+
+         get duration for that Stride
+         based on current interval time, determine how long this Stride could potentially be
+         if interval time is < avg duration, base distance on interval time duration
+         else base distance on avg duration for that type of Stride
+
+         get distance for that Stride
+         get average speed for that user, and use it and duration to calculate distance
+         multiply distance by 1.1 if user has gone on a Stride
+         based on the days they usually go on that Stride, if they didn't go on that Stride the last day, then
+         multiply distance by 1-(0.02)
+
+         get distance for the other type of Stride by the same calculations
+
+         return distance for that Stride and other Stride
+ */
     private void getRecommendations() {
-        // get numbers of steps taken that day          // get move distance for that day (miles)
-        // get location
-        // get height, weight, age, and recommended numbers of steps per day    // change this to recommended distance per day (miles)
-        // which Stride you prefer that day
-        // average duration and distance for that type of Stride
-        // time since last Stride
+        long numStepsToday = personalModelSharedPrefs.getNumStepsTakenThisDay();
+        double currLat = user_lat;
+        double currLong = user_lng;
+        double height = personalModelSharedPrefs.getHeight();
+        double weight = personalModelSharedPrefs.getWeight();
+        double age = personalModelSharedPrefs.getAge();
+        int recommendedSteps = 10000; // todo get rid of hardcode
 
-        // first determine type of Stride
-        // based on current day, you determine type of Stride, but
-        // if the user has already taken a run Stride, is already above the recommended step count, the Stride recommmended should be a walk
-        // whichever Stride is dominant for this recommendation, we should still give some options for the other type of Stride
+        boolean runToday = false;
+        boolean walkToday = false;
+        Calendar calendar = Calendar.getInstance();
+        int today = calendar.get(Calendar.DAY_OF_WEEK);
+        List<Integer> runDays = new ArrayList<>();
+        for (String i : personalModelSharedPrefs.getDaysOfRuns().split(", ")) {
+            if (Integer.valueOf(i) == today) {
+                runToday = true;
+                break;
+            }
+        }
+        for (String i : personalModelSharedPrefs.getDaysOfRuns().split(", ")) {
+            if (Integer.valueOf(i) == today) {
+                walkToday = true;
+                break;
+            }
+        }
 
-        // get duration for that Stride
-        // based on current interval time, determine how long this Stride could potentially be
-        // if interval time is < avg duration, base distance on interval time duration
-        // else base distance on avg duration for that type of Stride
+        float avgDistanceOfRun = personalModelSharedPrefs.getDistanceOfRuns();
+        int avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns();
+        float avgDistanceOfWalk = personalModelSharedPrefs.getDistanceOfWalks();
+        int avgDurationOfWalk = personalModelSharedPrefs.getDurationOfWalks();
 
-        // get distance for that Stride
-        // get average speed for that user, and use it and duration to calculate distance
-        // multiply distance by 1.1 if user has gone on a Stride
-        // based on the days they usually go on that Stride, if they didn't go on that Stride the last day, then
-        // multiply distance by 1-(0.02)
+        // calculate distance for Run
+        double durationOfRun = avgDurationOfRun; // todo
+        double avgSpeedOfRun = avgDistanceOfRun / avgDurationOfRun;
+        double distanceOfRun = avgSpeedOfRun * durationOfRun;
+        // todo change distance based on if user gone on run
 
-        // get distance for the other type of Stride by the same calculations
+        // calculate distance for Walk
+        double durationOfWalk = avgDurationOfWalk; // todo
+        double avgSpeedOfWalk = avgDistanceOfWalk / avgDurationOfWalk;
+        double distanceOfWalk = avgSpeedOfWalk * durationOfWalk;
+        // todo change distance based on if user gone on run
+    }
 
-        // return distance for that Stride and other Stride
+    private void getNumberOfStepsTakenToday() {
+        Task<DataSet> StepsResponse =
+                Fitness.getHistoryClient(this, GoogleSignIn.getLastSignedInAccount(this))
+                        .readDailyTotalFromLocalDevice(DataType.TYPE_STEP_COUNT_DELTA).addOnSuccessListener(new OnSuccessListener<DataSet>() {
+                    @Override
+                    public void onSuccess(DataSet dataSet) {
+                        long total = dataSet.isEmpty()
+                                ? 0
+                                : dataSet.getDataPoints().get(0).getValue(Field.FIELD_STEPS).asInt();
+
+                        Log.i(TAG, "MY STEPS TODAY " + Long.toString(total));
+                        personalModelSharedPrefs.setNumStepsTakenThisDay(total);
+                    }
+                });
     }
 }
