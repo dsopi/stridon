@@ -44,7 +44,7 @@ public class BuildModelService extends JobIntentService {
     private static final int MY_CAL_REQ = 1;
     Button button;
 
-    public static final String[] INSTANCE_PROJECTION = new String[] {
+    public static final String[] INSTANCE_PROJECTION = new String[]{
             CalendarContract.Instances.TITLE,      // 0
             CalendarContract.Instances.BEGIN,         // 1
             CalendarContract.Instances.END        // 2
@@ -89,28 +89,27 @@ public class BuildModelService extends JobIntentService {
 
         BE SURE TO GET CALENDAR PERMISSIONS
      */
-    public ArrayList<ArrayList<Long>> getCalendarTimes(){
+    public ArrayList<ArrayList<Long>> getCalendarTimes() {
         //get the start of the next day
         ArrayList<ArrayList<Long>> build = new ArrayList<ArrayList<Long>>();
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, 1);
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0);
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         long startMillis = cal.getTimeInMillis();
         cal.add(Calendar.DATE, 1);
         long endMillis = cal.getTimeInMillis();
 
         ContentResolver cr = getContentResolver();
-        Cursor cur = CalendarContract.Instances.query(cr, INSTANCE_PROJECTION, startMillis,endMillis);
+        Cursor cur = CalendarContract.Instances.query(cr, INSTANCE_PROJECTION, startMillis, endMillis);
 
-        if (cur.getCount() == 0){
+        if (cur.getCount() == 0) {
             ArrayList<Long> interval = new ArrayList<Long>();
             interval.add(startMillis);
             interval.add(endMillis);
             build.add(interval);
             return build;
-        }
-        else{
+        } else {
             ArrayList<Long> interval = new ArrayList<Long>();
             interval.add(startMillis);
             build.add(interval);
@@ -126,20 +125,19 @@ public class BuildModelService extends JobIntentService {
                 beginVal = cur.getLong(PROJECTION_BEGIN_INDEX);
                 endVal = cur.getLong(PROJECTION_END_INDEX);
 
-                build.get(build.size()-1).add(beginVal);
+                build.get(build.size() - 1).add(beginVal);
                 ArrayList<Long> interval = new ArrayList<Long>();
                 interval.add(endVal);
                 build.add(interval);
-            }
-            else {
+            } else {
                 System.out.println("Event not found");
             }
         }
-        build.get(build.size()-1).add(endMillis);
+        build.get(build.size() - 1).add(endMillis);
 
         //now filter through bad times and remove ones that are not good
-        for(int i  = 0; i < build.size(); i++){
-            if ((build.get(i).get(1) - build.get(i).get(0)) /60000L < 30){
+        for (int i = 0; i < build.size(); i++) {
+            if ((build.get(i).get(1) - build.get(i).get(0)) / 60000L < 30) {
                 build.remove(i);
                 i--;
             }
@@ -160,7 +158,7 @@ public class BuildModelService extends JobIntentService {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray list = response.getJSONArray("list");
-                    for (int i = 0; i < 8; i++){
+                    for (int i = 0; i < 8; i++) {
                         JSONObject time = list.getJSONObject(i);
                         JSONObject main = time.getJSONObject("main");
                         String temp = main.getString("temp");
@@ -170,15 +168,14 @@ public class BuildModelService extends JobIntentService {
                         JSONArray weather = time.getJSONArray("weather");
                         String description = weather.getJSONObject(0).getString("main");
 
-                        if (description.equals("Rain") || t >= 90.0){
+                        if (description.equals("Rain") || t >= 90.0) {
                             String dateString = time.getString("dt_txt");
                             try {
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                                 Calendar cal = Calendar.getInstance();
                                 cal.setTime(sdf.parse(dateString));
                                 badWeatherTimes.add(cal.getTimeInMillis());
-                            }
-                            catch (ParseException e){
+                            } catch (ParseException e) {
                                 System.out.println("Can't find the date time");
                             }
                         }
@@ -203,49 +200,90 @@ public class BuildModelService extends JobIntentService {
     public ArrayList<ArrayList<Long>> getWeatherTimes() {
         ArrayList<ArrayList<Long>> build = new ArrayList<ArrayList<Long>>();
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, 1);
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH),cal.get(Calendar.DAY_OF_MONTH),0,0);
-        long startMillis = cal.getTimeInMillis();
+//        cal.add(Calendar.DATE, 1);
+//        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), (int) ((cal.get(Calendar.HOUR_OF_DAY) + 1.5) / 3.0) * 3 + 9, 0, 0);
+        long startMillis = cal.getTime().getTime();
         cal.add(Calendar.DATE, 1);
         long endMillis = cal.getTimeInMillis();
-        if (badWeatherTimes.size() == 0){
+
+        Calendar newCal = Calendar.getInstance();
+        newCal.setTimeInMillis(startMillis);
+        Log.i(TAG, "start time interval " + newCal.getTime().toString());
+        newCal.setTimeInMillis(endMillis);
+        Log.i(TAG, "end time interval " + newCal.getTime().toString());
+
+        if (badWeatherTimes.size() == 0) {
             ArrayList<Long> interval = new ArrayList<Long>();
             interval.add(startMillis);
             interval.add(endMillis);
             build.add(interval);
             return build;
-        }
-        else{
-            ArrayList<Long> interval = new ArrayList<Long>();
-            interval.add(startMillis);
-            build.add(interval);
-        }
+        } else {
 
-        for(int i = 0; i < badWeatherTimes.size(); i++){
-            //if the weather is not in range of the day
-            if (startMillis < badWeatherTimes.get(i) && badWeatherTimes.get(i) < endMillis ){
-                build.get(build.size()-1).add(badWeatherTimes.get(i));
-                ArrayList<Long> interval = new ArrayList<Long>();
-
-                if (badWeatherTimes.get(i) + 10800000L < endMillis) {
-                    interval.add(badWeatherTimes.get(i) + 10800000L);
+            for (int i = 0; i < badWeatherTimes.size(); i++) {
+                Long badWeatherStart = badWeatherTimes.get(i);
+                if (startMillis < badWeatherStart) {
+                    ArrayList<Long> interval = new ArrayList<>();
+                    if ((badWeatherStart - startMillis) / 60000L >= 30) {
+                        interval.add(startMillis);
+                        interval.add(badWeatherStart);
+                        build.add(interval);
+                    }
+                    startMillis = badWeatherStart + 10800000L;
+                    for (int k = i + 1; k < badWeatherTimes.size() && badWeatherTimes.get(k) == startMillis; k++) {
+                        startMillis = startMillis + 10800000L;
+                        i++;
+                    }
+                } else {
+                    startMillis = badWeatherStart + 10800000L;
                 }
-                else{
-                    interval.add(endMillis);
-                }
+            }
+            if (startMillis < endMillis && (endMillis - startMillis) / 60000L >= 30) {
+                ArrayList<Long> interval = new ArrayList<>();
+                interval.add(startMillis);
+                interval.add(endMillis);
                 build.add(interval);
             }
-        }
 
-        for(int i  = 0; i < build.size(); i++){
-            if ((build.get(i).get(1) - build.get(i).get(0)) /60000L < 30){
-                build.remove(i);
-                i--;
-            }
+
         }
+//        } else {
+//            ArrayList<Long> interval = new ArrayList<Long>();
+//            interval.add(startMillis);
+//            build.add(interval);
+//        }
+//
+//        boolean addEnd = true;
+//        for (int i = 0; i < badWeatherTimes.size(); i++) {
+//            //if the weather is not in range of the day
+//            if (startMillis < badWeatherTimes.get(i) && badWeatherTimes.get(i) + 10800000L < endMillis) {
+//                build.get(build.size() - 1).add(badWeatherTimes.get(i));
+//                ArrayList<Long> interval = new ArrayList<Long>();
+//                interval.add(badWeatherTimes.get(i) + 10800000L);
+//                build.add(interval);
+//
+//            }
+//            else if(startMillis < badWeatherTimes.get(i) && badWeatherTimes.get(i) < endMillis){
+//                build.get(build.size() - 1).add(badWeatherTimes.get(i));
+//                addEnd = false;
+//            }
+//        }
+//        if (addEnd){
+//            build.get(build.size() - 1).add(endMillis);
+//        }
+
+
+//        for (int i = 0; i < build.size(); i++) {
+//            if ((build.get(i).get(1) - build.get(i).get(0)) / 60000L < 30) {
+//                build.remove(i);
+//                i--;
+//            }
+//        }
 
         return build;
     }
+
     /*
         based on free time from calendar and good weather intervals, return times where user can run
         store these times in sharedprefs
@@ -256,35 +294,87 @@ public class BuildModelService extends JobIntentService {
 
         ArrayList<ArrayList<Long>> build = new ArrayList<ArrayList<Long>>();
         //if no good times
-        if(calTimes.size() == 0 || weatherTimes.size() == 0){
+        if (calTimes.size() == 0 || weatherTimes.size() == 0) {
             return build;
         }
 
         Queue<ArrayList<Long>> freeIntervals = new LinkedList<ArrayList<Long>>();
 
-        for(int i = 0; i < calTimes.size(); i++){
+        for (int i = 0; i < calTimes.size(); i++) {
             freeIntervals.add(calTimes.get(i));
         }
-        for(int i = 0; i < calTimes.size(); i++){
+        for (int i = 0; i < calTimes.size(); i++) {
             ArrayList<Long> scheduleInterval = freeIntervals.remove();
-            for(int j = 0; j < weatherTimes.size(); j++){
-                ArrayList<Long> weatherInterval = weatherTimes.get(i);
-                if (weatherInterval.get(0) >= scheduleInterval.get(1)){
+            for (int j = 0; j < weatherTimes.size(); j++) {
+                ArrayList<Long> weatherInterval = weatherTimes.get(j);
+                if (weatherInterval.get(0) >= scheduleInterval.get(1)) {
                     break;
-                }
-                else{
+                } else {
                     ArrayList<Long> interval = new ArrayList<Long>();
-                    interval.add(Math.max(weatherInterval.get(0),scheduleInterval.get(0)));
-                    interval.add(Math.min(weatherInterval.get(1),scheduleInterval.get(1)));
+                    interval.add(Math.max(weatherInterval.get(0), scheduleInterval.get(0)));
+                    interval.add(Math.min(weatherInterval.get(1), scheduleInterval.get(1)));
                     freeIntervals.add(interval);
                 }
             }
         }
 
-        while(!freeIntervals.isEmpty()){
+        while (!freeIntervals.isEmpty()) {
             build.add(freeIntervals.remove());
         }
-        Log.i(TAG, build.toString());
+
+        ArrayList<ArrayList<String>> badWeatherTimeStrings = new ArrayList<>();
+        for (Long i : badWeatherTimes) {
+            ArrayList<String> timeInt = new ArrayList<>();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(i);
+            timeInt.add(cal.getTime().toString());
+            cal.setTimeInMillis(i + 10800000L);
+            timeInt.add(cal.getTime().toString());
+            badWeatherTimeStrings.add(timeInt);
+        }
+        Log.i(TAG, "bad weather intervals " + badWeatherTimes.toString());
+        Log.i(TAG, "bad weather intervals " + badWeatherTimeStrings.toString());
+
+        ArrayList<ArrayList<String>> weatherTimeStrings = new ArrayList<>();
+        for (ArrayList<Long> i : weatherTimes) {
+            ArrayList<String> timeInt = new ArrayList<>();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(i.get(0));
+            timeInt.add(cal.getTime().toString());
+            cal.setTimeInMillis(i.get(1));
+            timeInt.add(cal.getTime().toString());
+            weatherTimeStrings.add(timeInt);
+        }
+        Log.i(TAG, "weather intervals " + weatherTimes.toString());
+        Log.i(TAG, "weather intervals " + weatherTimeStrings.toString());
+
+        ArrayList<ArrayList<String>> calendarIntervalStrings = new ArrayList<>();
+        for (ArrayList<Long> i : calTimes) {
+            ArrayList<String> timeInt = new ArrayList<>();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(i.get(0));
+            timeInt.add(cal.getTime().toString());
+            cal.setTimeInMillis(i.get(1));
+            timeInt.add(cal.getTime().toString());
+            calendarIntervalStrings.add(timeInt);
+        }
+        Log.i(TAG, "calendar intervals " + calTimes.toString());
+        Log.i(TAG, "calendar intervals " + calendarIntervalStrings.toString());
+
+        ArrayList<ArrayList<String>> times = new ArrayList<>();
+        for (ArrayList<Long> i : build) {
+            ArrayList<String> timeInt = new ArrayList<>();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(i.get(0));
+            timeInt.add(cal.getTime().toString());
+            cal.setTimeInMillis(i.get(1));
+            timeInt.add(cal.getTime().toString());
+            times.add(timeInt);
+        }
+        Log.i(TAG, "intervals " + build.toString());
+        Log.i(TAG, "intervals " + times.toString());
+
+        setAlarms(build);
         return build;
 
     }
