@@ -480,16 +480,100 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void storeStride() {
-        Stride stride = new Stride(0, 0, "encoded polyline", 1, 0, "Run", 0, "Monday", Calendar.getInstance().getTimeInMillis());
+        ArrayList<Stride> strides = new ArrayList<>();
 
-        StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
-        storeStrideTask.execute(stride);
+        // runs
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 6, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 15, "Run", 76, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 10, 7, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.2, 15, "Run", 68, "Friday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 13, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2, 19, "Run", 75, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 20, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.3, 21, "Run", 74, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 24, 7, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.5, 25, "Run", 62, "Friday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.JANUARY, 27, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.1, 20, "Run", 70, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 3, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.2, 20, "Run", 64, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 7, 7, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 3, 30, "Run", 65, "Friday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 10, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.4, 25, "Run", 60, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 14, 7, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.7, 26, "Run", 60, "Friday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 24, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2, 18, "Run", 64, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.FEBRUARY, 28, 7, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.5, 24, "Run", 66, "Friday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.MARCH, 2, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 3.2, 35, "Run", 66, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.MARCH, 7, 9, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.5, 25, "Run", 68, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.MARCH, 8, 9, 30, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 4, 45, "Run", 61, "Monday", calendar.getTimeInMillis()));
+        calendar.set(Calendar.YEAR, Calendar.MARCH, 9, 8, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2.8, 30, "Run", 59, "Monday", calendar.getTimeInMillis()));
+
+        // walks
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 4, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", .9, 17, "Walk", 59, "Saturday", cal.getTimeInMillis()));
+
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 7, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.8, 23, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 8, 17, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 0.8, 16, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 14, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 18, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 18, 10, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", .4, 9, "Walk", 59, "Saturday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 21, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.8, 20, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 22, 12,0,0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.4, 25, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 28, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.2, 23, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 29, 12,0,0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 20, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 4, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 17, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 5, 12, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.1, 18, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 11, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.2, 20, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 12, 12, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.2, 20, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 18, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 17, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 19, 12, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", .6, 13, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 25, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.1, 19, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.FEBRUARY, 27, 12, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 2, 40, "Walk", 59, "Thursday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.MARCH, 3, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.8, 36, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+        cal.set(Calendar.YEAR, Calendar.MARCH, 10, 15, 0, 0);
+        strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 19, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
+
+
+        for (Stride stride : strides) {
+            StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
+            storeStrideTask.execute(stride);
+        }
     }
 
     private void retrieveStride() {
         StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, null);
         getLast10Strides.execute();
     }
+
+//    private void deleteStrides(){
+//
+//    }
 
 
     @Override
