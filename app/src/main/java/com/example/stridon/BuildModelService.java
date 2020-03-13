@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ReceiverCallNotAllowedException;
 import android.database.Cursor;
 import android.provider.CalendarContract;
 import android.util.Log;
@@ -94,6 +95,10 @@ public class BuildModelService extends JobIntentService {
         ArrayList<ArrayList<Long>> build = new ArrayList<ArrayList<Long>>();
 
         Calendar cal = Calendar.getInstance();
+
+        // debug
+        //        cal.add(Calendar.MINUTE, 1);
+
         cal.add(Calendar.DATE, 1);
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         long startMillis = cal.getTimeInMillis();
@@ -199,9 +204,14 @@ public class BuildModelService extends JobIntentService {
      */
     public ArrayList<ArrayList<Long>> getWeatherTimes() {
         ArrayList<ArrayList<Long>> build = new ArrayList<ArrayList<Long>>();
+
+        // debug only
+//        Calendar myCal = Calendar.getInstance();
+//        long startMillis = myCal.getTimeInMillis();
+//        myCal.add(Calendar.DATE, 1);
+//        long endMillis = myCal.getTimeInMillis();
+
         Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.DATE, 1);
-//        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH), (int) ((cal.get(Calendar.HOUR_OF_DAY) + 1.5) / 3.0) * 3 + 9, 0, 0);
         long startMillis = cal.getTime().getTime();
         cal.add(Calendar.DATE, 1);
@@ -383,13 +393,22 @@ public class BuildModelService extends JobIntentService {
         for each interval of free time, set an alarm to notify user
      */
     public void setAlarms(List<ArrayList<Long>> intervals) {
+        Log.i(TAG, "set alarms intervals " + intervals.toString());
         Log.i(TAG, "set notification alarms called");
 
+        Calendar cal = Calendar.getInstance();
+
         for (ArrayList<Long> interval : intervals) {
+            cal.setTimeInMillis(interval.get(0));
+            Log.i(TAG, "set notification alarm for " + cal.getTime().toString());
+
             Intent notifyUserIntent = new Intent(this, NotifyUserReceiver.class);
             PendingIntent notifyUserPendingIntent = PendingIntent.getBroadcast(this, 0, notifyUserIntent, 0);
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.get(0), notifyUserPendingIntent);
+            // debugging
+//            alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 5000, notifyUserPendingIntent);
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.get(0) , notifyUserPendingIntent);
         }
     }
 }
