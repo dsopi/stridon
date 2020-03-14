@@ -97,7 +97,6 @@ public class HomeActivity extends AppCompatActivity
     private StrideDatabaseHelper strideDatabaseHelper;
 
     private ArrayList<Stride> strideList = new ArrayList<Stride>();
-    private double newDistance = 1.0;
     private int pityCounter = 5;
 
     StrideRecFragment strideRecFragment = null;
@@ -230,6 +229,7 @@ public class HomeActivity extends AppCompatActivity
         if (mLocationPermissionGranted) {
             updateLocationUI();
 //            getDeviceLocation();
+            buildModel();
         }
 
     }
@@ -308,7 +308,6 @@ public class HomeActivity extends AppCompatActivity
                                 user_lng = mLastKnownLocation.getLongitude();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(user_lat, user_lng), DEFAULT_ZOOM));
-                                generateStrides(1.0);
                             }
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -325,7 +324,7 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-    private void getFourPoints(double distance) {
+    private void getFourPoints(double distance, String strideType) {
         double s_dis = distance / 2.0;
         double lat_dis = (0.3 + (Math.random() * .4)) * s_dis;
         double lng_dis = s_dis - lat_dis;
@@ -348,10 +347,10 @@ public class HomeActivity extends AppCompatActivity
         lat_array.add(user_lat);
         lng_array.add(user_lng + lng_dis / 59.0);
 
-        getDirectionUrl(lat_array, lng_array);
+        getDirectionUrl(lat_array, lng_array, distance, strideType);
     }
 
-    private void getDirectionUrl(ArrayList<Double> lat_array, ArrayList<Double> lng_array) {
+    private void getDirectionUrl(ArrayList<Double> lat_array, ArrayList<Double> lng_array, double distance, String strideType) {
 
         //Uses string building to make the url to pass to the volley
         String direction_url = "https://maps.googleapis.com/maps/api/directions/json?";
@@ -370,10 +369,10 @@ public class HomeActivity extends AppCompatActivity
         System.out.println(direction_url);
 
         //Now that the url is built, will go make the polyline
-        getPolyline(direction_url);
+        getPolyline(direction_url, distance, strideType);
     }
 
-    private void getPolyline(String url) {
+    private void getPolyline(String url, final double distance, final String strideType) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -395,8 +394,25 @@ public class HomeActivity extends AppCompatActivity
                             actualDistance = Math.round(actualDistance * 100.0) / 100.0;
                             System.out.println("actualDistance: " + actualDistance);
 
+                            int estDuration = 0;
+                            if (strideType.equals("Run")) {
+                                double avgDistanceOfRun = personalModelSharedPrefs.getDistanceOfRuns();
+                                double avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns();
+//                                double avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns()/60.0; // in hour
+                                double avgSpeedOfRun = avgDistanceOfRun / avgDurationOfRun;
+                                estDuration = (int) (actualDistance / avgSpeedOfRun);
+//                                estDuration = (int) (actualDistance / (avgSpeedOfRun / 60)); // in minutes
+                            } else {
+                                double avgDistanceOfWalk = personalModelSharedPrefs.getDistanceOfWalks();
+                                double avgDurationOfWalk = personalModelSharedPrefs.getDurationOfWalks();
+//                                double avgDurationOfWalk = personalModelSharedPrefs.getDurationOfWalks()/60.0;
+                                double avgSpeedOfWalk = avgDistanceOfWalk / avgDurationOfWalk;
+                                estDuration = (int) (actualDistance / avgSpeedOfWalk);
+//                                estDuration = (int) (actualDistance / (avgSpeedOfWalk / 60));
+                            }
+
                             // TODO update with actual values in Stride
-                            Stride newStride = new Stride(0, 0, encoded_line, actualDistance, 0, "Run", 0, "Monday", 0);
+                            Stride newStride = new Stride(user_lat, user_lng, encoded_line, actualDistance, estDuration, strideType, temp_today, "Monday", 0); // day,time, distance, duration will be overwritten
                             strideList.add(newStride);
 
                             //draw the initial line
@@ -405,7 +421,7 @@ public class HomeActivity extends AppCompatActivity
 //                                encodedLine = encoded_line;
                                 drawPolyline(currStride.getEncodedPolyline());
                             }
-                            if (strideList.size() >= 5) {
+                            if (strideList.size() >= 6) {
                                 linkStrideListToRecFragment();
                             }
 
@@ -414,7 +430,7 @@ public class HomeActivity extends AppCompatActivity
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
                             pityCounter--;
                             if (pityCounter > 0) {
-                                getFourPoints(newDistance);
+                                getFourPoints(distance, strideType);
                             }
                             e.printStackTrace();
                         }
@@ -438,11 +454,22 @@ public class HomeActivity extends AppCompatActivity
 
     }
 
-    private void generateStrides(double distance) {
-        newDistance = distance;
+    private void generateStrides(String strideType, double runDistance, double walkDistance) {
         strideList.clear();
-        for (int i = 0; i < 5; i++) {
-            getFourPoints(distance);
+        if (strideType.equals("Run")){
+            for (int i = 0; i < 4; i++) {
+                getFourPoints(runDistance, strideType);
+            }
+            for (int i = 0; i < 2; i++ ){
+                getFourPoints(walkDistance, "Walk");
+            }
+        } else {
+            for (int i = 0; i < 4; i++) {
+                getFourPoints(walkDistance, strideType);
+            }
+            for (int i = 0; i < 2; i++ ){
+                getFourPoints(runDistance, "Run");
+            }
         }
     }
 
@@ -645,9 +672,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void buildModel() {
-//        Intent serviceIntent = new Intent(this, BuildModelService.class);
-//        BuildModelService.enqueueWork(this, serviceIntent);
-        // todo build model should get intervals before generating recommendations
 
         getDeviceLocation();
         getNumberOfStepsTakenToday();
@@ -658,7 +682,6 @@ public class HomeActivity extends AppCompatActivity
             }
         });
         getLast10Strides.execute();
-
     }
 
     private void calculateModel(List<Stride> strides) {
@@ -706,6 +729,8 @@ public class HomeActivity extends AppCompatActivity
             personalModelSharedPrefs.setLastStrideTime(lastStrideTime);
 
         }
+
+        getRecommendations();
     }
 
     private void createNotificationChannel() {
@@ -745,9 +770,9 @@ public class HomeActivity extends AppCompatActivity
 
          get distance for that Stride
          get average speed for that user, and use it and duration to calculate distance
-         multiply distance by 1.1 if user has gone on a Stride
-         based on the days they usually go on that Stride, if they didn't go on that Stride the last day, then
-         multiply distance by 1-(0.02)
+//         multiply distance by 1.1 if user has gone on a Stride
+//         based on the days they usually go on that Stride, if they didn't go on that Stride the last day, then
+//         multiply distance by 1-(0.02)
 
          get distance for the other type of Stride by the same calculations
 
@@ -775,7 +800,6 @@ public class HomeActivity extends AppCompatActivity
         boolean walkToday = false;
         Calendar calendar = Calendar.getInstance();
         int today = calendar.get(Calendar.DAY_OF_WEEK);
-        List<Integer> runDays = new ArrayList<>();
         for (String i : personalModelSharedPrefs.getDaysOfRuns().split(", ")) {
             if (Integer.valueOf(i) == today) {
                 runToday = true;
@@ -789,30 +813,53 @@ public class HomeActivity extends AppCompatActivity
             }
         }
 
-        String recommendedStride;
+        String recommendedStride = "Walk";
         if (walkToday)
             recommendedStride = "Walk";
         if (runToday)
             recommendedStride = "Run";
 
+        Calendar cal = Calendar.getInstance();
+        int todayDate = cal.get(Calendar.DAY_OF_YEAR);
+        cal.setTimeInMillis(personalModelSharedPrefs.getLastRunStrideTime());
+        if (cal.get(Calendar.DAY_OF_YEAR) == todayDate || numStepsToday > recommendedSteps) {
+            recommendedStride = "Walk";
+        }
+
         float avgDistanceOfRun = personalModelSharedPrefs.getDistanceOfRuns();
-        int avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns();
+        double avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns();
         float avgDistanceOfWalk = personalModelSharedPrefs.getDistanceOfWalks();
-        int avgDurationOfWalk = personalModelSharedPrefs.getDurationOfWalks();
+        double avgDurationOfWalk = personalModelSharedPrefs.getDurationOfWalks();
+
+        // intervals of free time. if the user opens app not during these free intervals, default to 30 min
+        ArrayList<ArrayList<Long>> notificationTimes = personalModelSharedPrefs.getNotificationTimes();
+        Calendar rightNowCal = Calendar.getInstance();
+        Long rightNow = rightNowCal.getTimeInMillis();
+        long freeDuration = 30 * 60 * 1000; // default 30 minutes in milliseconds
+        for (ArrayList<Long> interval : notificationTimes) {
+            if (rightNow >= interval.get(0) && rightNow < interval.get(1)) {
+                freeDuration = interval.get(1) - interval.get(0);
+            }
+        }
 
         // calculate distance for Run
-        double durationOfRun = avgDurationOfRun; // todo
+        double durationOfRun = freeDuration/(60.0*1000); // in minutes
+        if (freeDuration > avgDurationOfRun) { // if user has an hour but usually runs for 30 min, only recommend 30 min run
+            durationOfRun = avgDurationOfRun;
+        }
         double avgSpeedOfRun = avgDistanceOfRun / avgDurationOfRun;
         double distanceOfRun = avgSpeedOfRun * durationOfRun;
 
-        // todo change distance based on if user gone on run
 
         // calculate distance for Walk
-        double durationOfWalk = avgDurationOfWalk; // todo
+        double durationOfWalk = freeDuration/(60.0*1000);
+        if (freeDuration > avgDurationOfWalk) {
+            durationOfWalk = avgDurationOfWalk;
+        }
         double avgSpeedOfWalk = avgDistanceOfWalk / avgDurationOfWalk;
         double distanceOfWalk = avgSpeedOfWalk * durationOfWalk;
-        // todo change distance based on if user gone on walk
 
+        generateStrides(recommendedStride, distanceOfRun, distanceOfWalk);
 
     }
 

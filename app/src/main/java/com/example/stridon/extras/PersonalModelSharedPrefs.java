@@ -2,6 +2,10 @@ package com.example.stridon.extras;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 public class PersonalModelSharedPrefs {
 
@@ -29,6 +33,7 @@ public class PersonalModelSharedPrefs {
     private static final String lastStrideTime = "lastStrideTime";
     private static final String lastRunStrideTime = "lastRunStrideTime";
     private static final String lastWalkStrideTime = "lastWalkStrideTime";
+    private static final String notificationTimes = "notificationtimes";
 
     private static PersonalModelSharedPrefs personalModelSharedPrefs;
 
@@ -227,5 +232,35 @@ public class PersonalModelSharedPrefs {
 
     public long getLastWalkStrideTime() {
         return prefs.getLong(lastWalkStrideTime, -1);
+    }
+
+    public void setNotificationTimes(ArrayList<ArrayList<Long>> intervals){
+        String userNotificationTimes = "";
+        String comma = "";
+        for (ArrayList<Long> interval : intervals) {
+            userNotificationTimes = userNotificationTimes + comma + "(" + interval.get(0) + " " + interval.get(1) + ")";
+            if (TextUtils.isEmpty(comma)) {
+                comma = ",";
+            }
+        }
+        editor.putString(notificationTimes, userNotificationTimes).apply();
+    }
+
+    public ArrayList<ArrayList<Long>> getNotificationTimes(){
+        ArrayList<ArrayList<Long>> notificationList = new ArrayList<>();
+        String notifTimes = prefs.getString(notificationTimes, "");
+        if (TextUtils.isEmpty(notifTimes)){
+            return notificationList;
+        }
+        String[] notifSplit = notifTimes.split(",");
+        for (String interval : notifSplit){
+            String[] intervalSplit = interval.replace("(", "").replace(")","").split(" ");
+            ArrayList<Long> newInterval = new ArrayList<>();
+            newInterval.add(Long.valueOf(intervalSplit[0]));
+            newInterval.add(Long.valueOf(intervalSplit[1]));
+            notificationList.add(newInterval);
+        }
+
+        return notificationList;
     }
 }

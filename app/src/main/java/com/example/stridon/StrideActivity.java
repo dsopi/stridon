@@ -41,6 +41,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.PolyUtil;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -85,6 +86,8 @@ public class StrideActivity extends AppCompatActivity
 
     private Stride stride;
 
+    HashMap<Integer, String> weekdayMap = new HashMap<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,12 +113,12 @@ public class StrideActivity extends AppCompatActivity
 
         startButton = findViewById(R.id.startButton);
         startButton.setText("Start!");
-            startButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    start();
-                }
-            });
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start();
+            }
+        });
 
         finishButton = findViewById(R.id.finishButton);
         finishButton.setVisibility(View.GONE);
@@ -129,6 +132,13 @@ public class StrideActivity extends AppCompatActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        weekdayMap.put(1, "Sunday");
+        weekdayMap.put(2, "Monday");
+        weekdayMap.put(3, "Tuesday");
+        weekdayMap.put(4, "Wednesday");
+        weekdayMap.put(5, "Thursday");
+        weekdayMap.put(6, "Friday");
+        weekdayMap.put(7, "Saturday");
     }
 
     @Override
@@ -262,6 +272,7 @@ public class StrideActivity extends AppCompatActivity
     public void start() {
         Calendar c = Calendar.getInstance();
         stride.setTime(c.getTimeInMillis());
+        stride.setDay(weekdayMap.get(c.get(Calendar.DAY_OF_WEEK)));
 
         stopwatch.start();
         stopwatch.setBase(SystemClock.elapsedRealtime());

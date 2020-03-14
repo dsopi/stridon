@@ -64,7 +64,7 @@ public class StrideRecAdapter extends RecyclerView.Adapter<StrideRecAdapter.Stri
         final Stride stride = strideRecs[position];
         holder.strideTypeTextView.setText(stride.getStrideType());
         holder.strideDistanceTextView.setText(String.valueOf(stride.getDistance()));
-        holder.strideEstimatedDuration.setText("estimated duration");
+        holder.strideEstimatedDuration.setText(String.valueOf(stride.getDuration()));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

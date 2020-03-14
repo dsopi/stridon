@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.ReceiverCallNotAllowedException;
 import android.database.Cursor;
 import android.provider.CalendarContract;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Button;
 
@@ -20,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.stridon.extras.PersonalModelSharedPrefs;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -317,7 +319,7 @@ public class BuildModelService extends JobIntentService {
             ArrayList<Long> scheduleInterval = freeIntervals.remove();
             for (int j = 0; j < weatherTimes.size(); j++) {
                 ArrayList<Long> weatherInterval = weatherTimes.get(j);
-                if (weatherInterval.get(0) >= scheduleInterval.get(1)) {
+                if (weatherInterval.get(0) > scheduleInterval.get(1)) {
                     break;
                 } else {
                     ArrayList<Long> interval = new ArrayList<Long>();
@@ -392,7 +394,7 @@ public class BuildModelService extends JobIntentService {
     /*
         for each interval of free time, set an alarm to notify user
      */
-    public void setAlarms(List<ArrayList<Long>> intervals) {
+    public void setAlarms(ArrayList<ArrayList<Long>> intervals) {
         Log.i(TAG, "set alarms intervals " + intervals.toString());
         Log.i(TAG, "set notification alarms called");
 
@@ -405,10 +407,11 @@ public class BuildModelService extends JobIntentService {
             Intent notifyUserIntent = new Intent(this, NotifyUserReceiver.class);
             PendingIntent notifyUserPendingIntent = PendingIntent.getBroadcast(this, 0, notifyUserIntent, 0);
 
-            // debugging
+//             debugging
 //            alarmManager.setExact(AlarmManager.RTC_WAKEUP, Calendar.getInstance().getTimeInMillis() + 5000, notifyUserPendingIntent);
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.get(0) , notifyUserPendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, interval.get(0), notifyUserPendingIntent);
         }
+        PersonalModelSharedPrefs.getInstance(this.getApplicationContext()).setNotificationTimes(intervals);
     }
 }
