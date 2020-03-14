@@ -13,6 +13,10 @@
         android:title="retrieve Stride" />
 
     <item
+        android:id="@+id/deleteStrides"
+        android:title="delete Strides" />
+
+    <item
         android:id="@+id/buildModel"
         android:title="build model" />
 

@@ -40,6 +40,8 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
     private static final String DELETE_STRIDE_TABLE =
             "DROP TABLE IF EXISTS " + StrideColumns.STRIDE_TABLE_NAME;
 
+    private static final String DELETE_ALL_STRIDES = "DELETE FROM " + StrideColumns.STRIDE_TABLE_NAME;
+
     private static StrideDatabaseHelper strideDatabaseHelper;
 
     public static synchronized StrideDatabaseHelper getInstance(Context context) {
@@ -183,6 +185,30 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
             if (callback != null) {
                 callback.onStridesReceived(strides);
             }
+        }
+    }
+
+    /*
+        debug only
+     */
+    public static class DeleteStrides extends AsyncTask<Void, Void, Void> {
+        private StrideDatabaseHelper strideDatabaseHelper;
+
+
+        public DeleteStrides(StrideDatabaseHelper strideDatabaseHelper) {
+            this.strideDatabaseHelper = strideDatabaseHelper;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SQLiteDatabase db = strideDatabaseHelper.getWritableDatabase();
+            try {
+                db.execSQL(DELETE_ALL_STRIDES);
+            } catch (Exception e) {
+                Log.i(TAG, "Error while trying to delete Strides from database");
+                Log.i(TAG, e.toString());
+            }
+            return null;
         }
     }
 }

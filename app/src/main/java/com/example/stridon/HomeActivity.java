@@ -203,6 +203,10 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "retrieve stride");
                 retrieveStride();
                 return true;
+            case R.id.deleteStrides:
+                Log.i(TAG, "delete strides");
+                deleteStrides();
+                return true;
             case R.id.buildModel:
                 Log.i(TAG, "build model");
                 buildModel();
@@ -578,9 +582,10 @@ public class HomeActivity extends AppCompatActivity
         getLast10Strides.execute();
     }
 
-//    private void deleteStrides(){
-//
-//    }
+    private void deleteStrides() {
+        StrideDatabaseHelper.DeleteStrides deleteStrides = new StrideDatabaseHelper.DeleteStrides(strideDatabaseHelper);
+        deleteStrides.execute();
+    }
 
 
     @Override
