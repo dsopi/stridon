@@ -27,6 +27,8 @@ public class PersonalModelSharedPrefs {
     private static final String numStepsTakenThisDay = "numStepsTakenThisDay";
     private static final String avgNumStepsTakenPerDay = "avgNumStepsTakenPerDay"; // todo how to keep track of this
     private static final String lastStrideTime = "lastStrideTime";
+    private static final String lastRunStrideTime = "lastRunStrideTime";
+    private static final String lastWalkStrideTime = "lastWalkStrideTime";
 
     private static PersonalModelSharedPrefs personalModelSharedPrefs;
 
@@ -209,5 +211,21 @@ public class PersonalModelSharedPrefs {
 
     public long getLastStrideTime() {
         return prefs.getLong(lastStrideTime, -1);
+    }
+
+    public void setLastRunStrideTime(long userLastRunStrideTime) {
+        editor.putLong(lastRunStrideTime, userLastRunStrideTime).apply();
+    }
+
+    public long getLastRunStrideTime() {
+        return prefs.getLong(lastRunStrideTime, -1);
+    }
+
+    public void setLastWalkStrideTime(long userLastWalkStrideTime) {
+        editor.putLong(lastWalkStrideTime, userLastWalkStrideTime).apply();
+    }
+
+    public long getLastWalkStrideTime() {
+        return prefs.getLong(lastWalkStrideTime, -1);
     }
 }

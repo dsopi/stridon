@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stridon.SQLite.StrideDatabaseHelper;
+import com.example.stridon.extras.PersonalModelSharedPrefs;
 
 public class StrideResultActivity extends AppCompatActivity {
 
@@ -22,16 +23,20 @@ public class StrideResultActivity extends AppCompatActivity {
 
     private Stride stride;
 
+    private PersonalModelSharedPrefs personalModelSharedPrefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stride_result);
 
+        personalModelSharedPrefs = PersonalModelSharedPrefs.getInstance(this.getApplicationContext());
+
         Intent intent = getIntent();
 
-        long totalTime = intent.getLongExtra("totalTime",0);
-        int stepCount = intent.getIntExtra("stepCount",0);
-        float distance = intent.getFloatExtra("distance",0);
+        long totalTime = intent.getLongExtra("totalTime", 0);
+        int stepCount = intent.getIntExtra("stepCount", 0);
+        float distance = intent.getFloatExtra("distance", 0);
         stride = intent.getParcelableExtra("stride");
 
         stepsView = findViewById(R.id.stepsView);
@@ -58,21 +63,29 @@ public class StrideResultActivity extends AppCompatActivity {
 
         //pace
         float rawSeconds = totalTime;
-        rawSeconds  = rawSeconds / 1000;
+        rawSeconds = rawSeconds / 1000;
         float rawMinutes = rawSeconds / 60;
         float pace = distance / rawMinutes;
 
-        paceView.setText("Pace: " +  pace + " meters/min");
+        paceView.setText("Pace: " + pace + " meters/min");
 
         stride.setDistance(distance);
-        stride.setDuration((int)minutes);
+        stride.setDuration((int) minutes);
 
         saveStride();
     }
 
-    private void saveStride(){
+    private void saveStride() {
         Log.i(TAG, "save stride " + stride.toString());
-        StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(StrideDatabaseHelper.getInstance(this));
+        StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(StrideDatabaseHelper.getInstance(this), new StrideDatabaseHelper.StoreStrideTask.StoreStrideTaskListener() {
+            @Override
+            public void onStrideStored(Stride stride) {
+                if (stride.getStrideType().equals("Run"))
+                    personalModelSharedPrefs.setLastRunStrideTime(stride.getTime());
+                else
+                    personalModelSharedPrefs.setLastWalkStrideTime(stride.getTime());
+            }
+        });
         storeStrideTask.execute(stride);
     }
 

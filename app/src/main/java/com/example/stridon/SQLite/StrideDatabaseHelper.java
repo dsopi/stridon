@@ -67,9 +67,15 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
     public static class StoreStrideTask extends AsyncTask<Stride, Void, Void> {
 
         private StrideDatabaseHelper strideDatabaseHelper;
+        private StoreStrideTaskListener callback;
 
-        public StoreStrideTask(StrideDatabaseHelper strideDatabaseHelper) {
+        public interface StoreStrideTaskListener {
+            void onStrideStored(Stride stride);
+        }
+
+        public StoreStrideTask(StrideDatabaseHelper strideDatabaseHelper, StoreStrideTaskListener callback) {
             this.strideDatabaseHelper = strideDatabaseHelper;
+            this.callback = callback;
         }
 
         @Override
@@ -99,6 +105,8 @@ public class StrideDatabaseHelper extends SQLiteOpenHelper {
             } finally {
                 db.endTransaction();
             }
+            if (callback != null)
+                callback.onStrideStored(stride);
             return null;
         }
 

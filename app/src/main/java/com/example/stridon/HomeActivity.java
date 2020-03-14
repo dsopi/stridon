@@ -305,7 +305,6 @@ public class HomeActivity extends AppCompatActivity
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(user_lat, user_lng), DEFAULT_ZOOM));
                                 generateStrides(1.0);
-
                             }
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -532,11 +531,11 @@ public class HomeActivity extends AppCompatActivity
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", .4, 9, "Walk", 59, "Saturday", cal.getTimeInMillis()));
         cal.set(Calendar.YEAR, Calendar.JANUARY, 21, 15, 0, 0);
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.8, 20, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
-        cal.set(Calendar.YEAR, Calendar.JANUARY, 22, 12,0,0);
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 22, 12, 0, 0);
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.4, 25, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
         cal.set(Calendar.YEAR, Calendar.JANUARY, 28, 15, 0, 0);
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1.2, 23, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
-        cal.set(Calendar.YEAR, Calendar.JANUARY, 29, 12,0,0);
+        cal.set(Calendar.YEAR, Calendar.JANUARY, 29, 12, 0, 0);
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 20, "Walk", 59, "Wednesday", cal.getTimeInMillis()));
         cal.set(Calendar.YEAR, Calendar.FEBRUARY, 4, 15, 0, 0);
         strides.add(new Stride(33.6405, 117.8443, "encoded polyline", 1, 17, "Walk", 59, "Tuesday", cal.getTimeInMillis()));
@@ -561,7 +560,15 @@ public class HomeActivity extends AppCompatActivity
 
 
         for (Stride stride : strides) {
-            StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper);
+            StrideDatabaseHelper.StoreStrideTask storeStrideTask = new StrideDatabaseHelper.StoreStrideTask(strideDatabaseHelper, new StrideDatabaseHelper.StoreStrideTask.StoreStrideTaskListener() {
+                @Override
+                public void onStrideStored(Stride stride) {
+                    if (stride.getStrideType().equals("Run"))
+                        personalModelSharedPrefs.setLastRunStrideTime(stride.getTime());
+                    else
+                        personalModelSharedPrefs.setLastWalkStrideTime(stride.getTime());
+                }
+            });
             storeStrideTask.execute(stride);
         }
     }
@@ -637,7 +644,7 @@ public class HomeActivity extends AppCompatActivity
 //        BuildModelService.enqueueWork(this, serviceIntent);
         // todo build model should get intervals before generating recommendations
 
-        getLocationPermission();
+        getDeviceLocation();
         getNumberOfStepsTakenToday();
         StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, new StrideDatabaseHelper.GetLast10Strides.GetLast10StridesListener() {
             @Override
@@ -692,6 +699,7 @@ public class HomeActivity extends AppCompatActivity
             personalModelSharedPrefs.setDurationOfRuns(avgRunDuration);
             personalModelSharedPrefs.setDurationOfWalks(avgWalkDuration);
             personalModelSharedPrefs.setLastStrideTime(lastStrideTime);
+
         }
     }
 
@@ -747,7 +755,16 @@ public class HomeActivity extends AppCompatActivity
         double height = personalModelSharedPrefs.getHeight();
         double weight = personalModelSharedPrefs.getWeight();
         double age = personalModelSharedPrefs.getAge();
-        int recommendedSteps = 10000; // todo get rid of hardcode
+        int recommendedSteps = 10000; // baseline for recommended steps per day
+        double bmi = 703.0 * weight / (height * height);
+        if (bmi > 30) { // obese
+            recommendedSteps = (int) (0.8 * recommendedSteps);
+        } else if (bmi > 25) {
+            recommendedSteps = (int) (0.9 * recommendedSteps);
+        }
+        if (age > 50) {
+            recommendedSteps = (int) (0.75 * recommendedSteps);
+        }
 
         boolean runToday = false;
         boolean walkToday = false;
@@ -767,6 +784,12 @@ public class HomeActivity extends AppCompatActivity
             }
         }
 
+        String recommendedStride;
+        if (walkToday)
+            recommendedStride = "Walk";
+        if (runToday)
+            recommendedStride = "Run";
+
         float avgDistanceOfRun = personalModelSharedPrefs.getDistanceOfRuns();
         int avgDurationOfRun = personalModelSharedPrefs.getDurationOfRuns();
         float avgDistanceOfWalk = personalModelSharedPrefs.getDistanceOfWalks();
@@ -776,13 +799,16 @@ public class HomeActivity extends AppCompatActivity
         double durationOfRun = avgDurationOfRun; // todo
         double avgSpeedOfRun = avgDistanceOfRun / avgDurationOfRun;
         double distanceOfRun = avgSpeedOfRun * durationOfRun;
+
         // todo change distance based on if user gone on run
 
         // calculate distance for Walk
         double durationOfWalk = avgDurationOfWalk; // todo
         double avgSpeedOfWalk = avgDistanceOfWalk / avgDurationOfWalk;
         double distanceOfWalk = avgSpeedOfWalk * durationOfWalk;
-        // todo change distance based on if user gone on run
+        // todo change distance based on if user gone on walk
+
+
     }
 
     private void getNumberOfStepsTakenToday() {
