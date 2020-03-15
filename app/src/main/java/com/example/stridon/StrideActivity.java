@@ -348,7 +348,7 @@ public class StrideActivity extends AppCompatActivity
         Intent resultsIntent = new Intent(this, StrideResultActivity.class);
 
         resultsIntent.putExtra("stepCount", stepCount);
-        resultsIntent.putExtra("distance", distance);
+        resultsIntent.putExtra("distance", distance/ 1609);
         resultsIntent.putExtra("totalTime", totalTime);
         resultsIntent.putExtra("stride", stride);
         resultsIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

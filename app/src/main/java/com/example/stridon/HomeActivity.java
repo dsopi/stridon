@@ -372,7 +372,7 @@ public class HomeActivity extends AppCompatActivity
         getPolyline(direction_url, distance, strideType);
     }
 
-    private void getPolyline(String url, final double distance, final String strideType) {
+    private void getPolyline(String url, final double myDistance, final String strideType) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -430,7 +430,7 @@ public class HomeActivity extends AppCompatActivity
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
                             pityCounter--;
                             if (pityCounter > 0) {
-                                getFourPoints(distance, strideType);
+                                getFourPoints(myDistance, strideType);
                             }
                             e.printStackTrace();
                         }
