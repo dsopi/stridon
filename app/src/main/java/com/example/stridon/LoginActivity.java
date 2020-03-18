@@ -103,6 +103,8 @@ public class LoginActivity extends AppCompatActivity {
             // todo ask for calendar and location permissions and THEN call go to settings
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_CALENDAR}, MY_CAL_REQ);
+            } else {
+                goToSettings();
             }
 
         } catch (ApiException e) {
