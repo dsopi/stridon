@@ -331,6 +331,8 @@ public class SettingsActivity extends AppCompatActivity {
         if (durationOfRuns != null && distanceOfRuns != null && !TextUtils.isEmpty(distanceOfRuns.getText().toString()) && !TextUtils.isEmpty(durationOfRuns.getText().toString())) {
             int durationInMinutes = Integer.valueOf(durationOfRuns.getText().toString());
             personalModelSharedPrefs.setDurationOfRuns(durationInMinutes);
+            double distanceRuns = Double.valueOf(distanceOfRuns.getText().toString());
+            personalModelSharedPrefs.setDistanceOfRuns((float)distanceRuns);
 //            float durationInHours = durationInMinutes / (float) 60;
 //
 //            float avgSpeedOfRuns = Float.valueOf(distanceOfRuns.getText().toString()) / durationInHours;
@@ -351,7 +353,8 @@ public class SettingsActivity extends AppCompatActivity {
             int durationInMinutes = Integer.valueOf(durationOfWalks.getText().toString());
             personalModelSharedPrefs.setDurationOfWalks(durationInMinutes);
             float durationInHours = durationInMinutes / (float) 60;
-
+            double distanceWalks = Double.valueOf(distanceOfWalks.getText().toString());
+            personalModelSharedPrefs.setDistanceOfWalks((float)distanceWalks);
 //            float avgSpeedOfWalks = Float.valueOf(distanceOfWalks.getText().toString()) / durationInHours;
 //            personalModelSharedPrefs.setAvgSpeedOfWalks(avgSpeedOfWalks);
         }

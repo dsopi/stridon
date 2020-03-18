@@ -267,6 +267,7 @@ public class HomeActivity extends AppCompatActivity
             }
         }
         updateLocationUI();
+        buildModel();
     }
 
     private void updateLocationUI() {
