@@ -59,7 +59,9 @@ public class DeviceBootReceiver extends BroadcastReceiver {
         ArrayList<ArrayList<Long>> notificationTimes = PersonalModelSharedPrefs.getInstance(context.getApplicationContext()).getNotificationTimes();
         if (!notificationTimes.isEmpty()) {
             for (ArrayList<Long> i : notificationTimes) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, i.get(0), alarmIntent);
+                Intent notifyUserIntent = new Intent(context, NotifyUserReceiver.class);
+                PendingIntent notifyUserPendingIntent = PendingIntent.getBroadcast(context, 0, notifyUserIntent, 0);
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, i.get(0), notifyUserPendingIntent);
             }
         }
     }
