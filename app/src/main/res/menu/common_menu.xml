@@ -21,6 +21,9 @@
         android:title="build model" />
 
     <item
+        android:id="@+id/sendNotification"
+        android:title="notif" />
+    <item
         android:id="@+id/logoutOption"
         android:title="logout" />
 </menu>

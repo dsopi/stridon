@@ -96,7 +96,7 @@ public class HomeActivity extends AppCompatActivity
 
     private StrideDatabaseHelper strideDatabaseHelper;
 
-    private ArrayList<Stride> strideList = new ArrayList<Stride>();
+    private volatile ArrayList<Stride> strideList = new ArrayList<Stride>();
     private int pityCounter = 5;
 
     StrideRecFragment strideRecFragment = null;
@@ -210,6 +210,11 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "build model");
                 buildModel();
                 return true;
+            case R.id.sendNotification:
+                Log.i(TAG, "send notification");
+                Intent notifyUserIntent = new Intent(this, NotifyUserReceiver.class);
+                sendBroadcast(notifyUserIntent);
+                return true;
             case R.id.logoutOption:
                 Log.i(TAG, "logout");
                 signOut();
@@ -229,7 +234,7 @@ public class HomeActivity extends AppCompatActivity
         if (mLocationPermissionGranted) {
             updateLocationUI();
 //            getDeviceLocation();
-            buildModel();
+//            buildModel();
         }
 
     }
@@ -309,6 +314,7 @@ public class HomeActivity extends AppCompatActivity
                                 user_lng = mLastKnownLocation.getLongitude();
                                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
                                         new LatLng(user_lat, user_lng), DEFAULT_ZOOM));
+                                buildModel();
                             }
                         } else {
                             Log.d(TAG, "Current location is null. Using defaults.");
@@ -373,7 +379,7 @@ public class HomeActivity extends AppCompatActivity
         getPolyline(direction_url, distance, strideType);
     }
 
-    private void getPolyline(String url, final double myDistance, final String strideType) {
+    private void getPolyline(final String url, final double myDistance, final String strideType) {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -429,9 +435,11 @@ public class HomeActivity extends AppCompatActivity
 
                         } catch (JSONException e) {
                             System.out.println("Error: Could not retrieve the Polyline from Direction Url");
+                            System.out.println(e.toString());
                             pityCounter--;
                             if (pityCounter > 0) {
-                                getFourPoints(myDistance, strideType);
+//                                getFourPoints(myDistance, strideType);
+                                getPolyline(url, myDistance, strideType);
                             }
                             e.printStackTrace();
                         }
@@ -457,18 +465,18 @@ public class HomeActivity extends AppCompatActivity
 
     private void generateStrides(String strideType, double runDistance, double walkDistance) {
         strideList.clear();
-        if (strideType.equals("Run")){
+        if (strideType.equals("Run")) {
             for (int i = 0; i < 4; i++) {
                 getFourPoints(runDistance, strideType);
             }
-            for (int i = 0; i < 2; i++ ){
+            for (int i = 0; i < 2; i++) {
                 getFourPoints(walkDistance, "Walk");
             }
         } else {
             for (int i = 0; i < 4; i++) {
                 getFourPoints(walkDistance, strideType);
             }
-            for (int i = 0; i < 2; i++ ){
+            for (int i = 0; i < 2; i++) {
                 getFourPoints(runDistance, "Run");
             }
         }
@@ -673,8 +681,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void buildModel() {
-
-        getDeviceLocation();
+//        getDeviceLocation();
         getNumberOfStepsTakenToday();
         StrideDatabaseHelper.GetLast10Strides getLast10Strides = new StrideDatabaseHelper.GetLast10Strides(strideDatabaseHelper, new StrideDatabaseHelper.GetLast10Strides.GetLast10StridesListener() {
             @Override
@@ -844,7 +851,7 @@ public class HomeActivity extends AppCompatActivity
         }
 
         // calculate distance for Run
-        double durationOfRun = freeDuration/(60.0*1000); // in minutes
+        double durationOfRun = freeDuration / (60.0 * 1000); // in minutes
         if (freeDuration > avgDurationOfRun) { // if user has an hour but usually runs for 30 min, only recommend 30 min run
             durationOfRun = avgDurationOfRun;
         }
@@ -853,7 +860,7 @@ public class HomeActivity extends AppCompatActivity
 
 
         // calculate distance for Walk
-        double durationOfWalk = freeDuration/(60.0*1000);
+        double durationOfWalk = freeDuration / (60.0 * 1000);
         if (freeDuration > avgDurationOfWalk) {
             durationOfWalk = avgDurationOfWalk;
         }
