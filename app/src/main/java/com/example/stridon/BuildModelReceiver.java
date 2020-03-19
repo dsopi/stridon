@@ -30,7 +30,7 @@ public class BuildModelReceiver extends BroadcastReceiver {
         BuildModelService.enqueueWork(context,serviceIntent);
         Log.i(TAG, "call start service");
 
-        pushNotification(context);
+//        pushNotification(context);
     }
 
     // todo move this somewhere else later

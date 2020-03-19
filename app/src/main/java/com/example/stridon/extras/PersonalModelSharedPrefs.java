@@ -197,7 +197,6 @@ public class PersonalModelSharedPrefs {
         editor.putLong(numStepsTakenThisDay, userSetNumStepsTakenThisDay).apply();
     }
 
-    // TODO does this need to be stored? couldn't be queried from google fit API?
     public long getNumStepsTakenThisDay() {
         return prefs.getLong(numStepsTakenThisDay, -1);
     }

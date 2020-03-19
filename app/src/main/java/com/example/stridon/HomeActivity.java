@@ -194,23 +194,23 @@ public class HomeActivity extends AppCompatActivity
                 Log.i(TAG, "settings");
                 goToSettings();
                 return true;
-            case R.id.storeStride:
+            case R.id.storeStride: // debugging
                 Log.i(TAG, "store stride");
                 storeStride();
                 return true;
-            case R.id.retrieveStride:
+            case R.id.retrieveStride: // debugging
                 Log.i(TAG, "retrieve stride");
                 retrieveStride();
                 return true;
-            case R.id.deleteStrides:
+            case R.id.deleteStrides: // debugging
                 Log.i(TAG, "delete strides");
                 deleteStrides();
                 return true;
-            case R.id.buildModel:
+            case R.id.buildModel: // debugging
                 Log.i(TAG, "build model");
                 buildModel();
                 return true;
-            case R.id.sendNotification:
+            case R.id.sendNotification: // debugging
                 Log.i(TAG, "send notification");
                 Intent notifyUserIntent = new Intent(this, NotifyUserReceiver.class);
                 sendBroadcast(notifyUserIntent);
@@ -418,7 +418,6 @@ public class HomeActivity extends AppCompatActivity
 //                                estDuration = (int) (actualDistance / (avgSpeedOfWalk / 60));
                             }
 
-                            // TODO update with actual values in Stride
                             Stride newStride = new Stride(user_lat, user_lng, encoded_line, actualDistance, estDuration, strideType, temp_today, "Monday", 0); // day,time, distance, duration will be overwritten
                             strideList.add(newStride);
 
